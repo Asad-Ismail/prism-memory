@@ -9,6 +9,12 @@ This repository has two layers:
 
 Changes should preserve clarity between those two layers.
 
+See the navigation docs for the current public layout:
+
+- `docs/README.md`
+- `docs/release/README.md`
+- `docs/research/README.md`
+
 ## Setup
 
 Install the base package:
@@ -70,6 +76,7 @@ If you add new benchmark adapters or external assets, update:
 
 - `.gitignore`
 - `external/README.md`
+- `scripts/README.md`
 - `README.md`
 
 ## Documentation Expectations
@@ -77,11 +84,12 @@ If you add new benchmark adapters or external assets, update:
 If you change the public release story, update the relevant docs together:
 
 - `README.md`
-- `DATASETS.md`
-- `RELEASE_RESULTS.md`
-- `MEMORY_EXTRACTION_SKILL.md`
-- `technical_blog.md`
-- `model_card.md`
+- `docs/release/README.md`
+- `docs/release/datasets.md`
+- `docs/release/release-results.md`
+- `docs/release/extraction-skill.md`
+- `docs/release/technical-blog.md`
+- `docs/release/model-card.md`
 
 ## Testing Expectations
 
@@ -89,7 +97,7 @@ Before opening a PR, run:
 
 ```bash
 python -m unittest discover -s tests -p 'test_*.py' -v
-python -m compileall frontier_memory scripts space confirm_exp15_results.py build_scenario_comparisons.py
+python -m compileall frontier_memory scripts space tests
 ```
 
 ## Style

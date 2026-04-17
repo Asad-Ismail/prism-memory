@@ -6,12 +6,12 @@ BUNDLE_DIR="$ROOT_DIR/dist/space_bundle"
 SPACE_REPO="${1:-}"
 
 rm -rf "$BUNDLE_DIR"
-mkdir -p "$BUNDLE_DIR/results"
+mkdir -p "$BUNDLE_DIR/results" "$BUNDLE_DIR/docs/release"
 
 cp "$ROOT_DIR/space/app.py" "$BUNDLE_DIR/app.py"
 cp "$ROOT_DIR/space/README.md" "$BUNDLE_DIR/README.md"
 cp "$ROOT_DIR/space/requirements.txt" "$BUNDLE_DIR/requirements.txt"
-cp "$ROOT_DIR/MEMORY_EXTRACTION_SKILL.md" "$BUNDLE_DIR/MEMORY_EXTRACTION_SKILL.md"
+cp "$ROOT_DIR/docs/release/extraction-skill.md" "$BUNDLE_DIR/docs/release/extraction-skill.md"
 cp "$ROOT_DIR/results/confirmed_exp15_summary.json" "$BUNDLE_DIR/results/confirmed_exp15_summary.json"
 cp "$ROOT_DIR/results/scenario_comparisons.json" "$BUNDLE_DIR/results/scenario_comparisons.json"
 

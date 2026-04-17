@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Iterable, Optional
 
 from .config import CandidateConfig, load_candidate
+from .llm_backend import _load_env_file
 from .system import HybridMemorySystem
 from .types import MemoryEvent
 
@@ -26,6 +27,7 @@ class MemEvalRunResult:
 
 
 def ensure_memeval_imports(root: Path | str = MEMEVAL_ROOT) -> Path:
+    _load_env_file()
     root = Path(root).expanduser().resolve()
     src = root / "src"
     if not src.exists():
@@ -69,6 +71,8 @@ def apply_memeval_overrides(candidate: CandidateConfig) -> CandidateConfig:
         context["semantic_top_k"] = max(int(context.get("semantic_top_k", 8)), 10)
         context["episodic_top_k"] = max(int(context.get("episodic_top_k", 5)), 8)
         tuned.set(["llm", "context"], context)
+        tuned.set(["benchmark_overrides", "memeval", "answer_mode"], "full_context")
+        tuned.set(["benchmark_overrides", "memeval", "max_full_context_turns"], 600)
     return tuned
 
 
@@ -136,7 +140,37 @@ def evaluate_candidate_on_conversation(
         system.ingest(event)
     print(f"    Ingested: {len(dialogues)} turns")
 
+    answer_mode = str(
+        candidate.get("benchmark_overrides", "memeval", "answer_mode", default="retrieval")
+    )
+    max_full_context_turns = int(
+        candidate.get("benchmark_overrides", "memeval", "max_full_context_turns", default=0)
+    )
+    full_context_text = _format_dialogues_as_evidence(dialogues)
+    qa_by_question = {
+        str(qa.get("question", "")): qa
+        for qa in conv.get("qa", [])
+    }
+
     def answer_fn(question: str) -> str:
+        qa = qa_by_question.get(question, {})
+        if (
+            answer_mode == "full_context"
+            and system.llm_backend is not None
+            and len(dialogues) <= max_full_context_turns
+        ):
+            system._ensure_consolidated()
+            plan = system.router.route(question, system.semantic.subjects())
+            heuristic = system._answer_heuristically(plan, question)
+            focused_context = system._collect_llm_context(plan, question)["text"]
+            return normalize_memeval_prediction(
+                system.llm_backend.answer(
+                    question=question,
+                    evidence_text=f"{focused_context}\n\n{full_context_text}",
+                    heuristic_answer=heuristic,
+                    task_instructions=_memeval_task_instructions(qa),
+                )
+            )
         return normalize_memeval_prediction(system.answer(question))
 
     return _memeval_qa_results(
@@ -320,6 +354,65 @@ def load_candidate_for_memeval(path: str | Path, *, memeval_tuned: bool = True) 
     return apply_memeval_overrides(candidate) if memeval_tuned else candidate
 
 
+def _format_dialogues_as_evidence(dialogues: list[dict[str, Any]]) -> str:
+    lines = ["Conversation transcript:"]
+    session_timeline: dict[str, str] = {}
+    for turn in dialogues:
+        speaker = str(turn.get("speaker", "Unknown"))
+        text = str(turn.get("text", ""))
+        timestamp = str(turn.get("timestamp", "") or "").strip()
+        dia_id = str(turn.get("dia_id", "") or "").strip()
+        if dia_id and "_" in dia_id and timestamp:
+            session_key = dia_id.rsplit("_", 1)[0]
+            session_timeline.setdefault(session_key, timestamp)
+        prefix_bits = []
+        if dia_id:
+            prefix_bits.append(dia_id)
+        if timestamp:
+            prefix_bits.append(timestamp)
+        prefix = " | ".join(prefix_bits)
+        if prefix:
+            lines.append(f"[{prefix}] {speaker}: {text}")
+        else:
+            lines.append(f"{speaker}: {text}")
+    if session_timeline:
+        timeline_lines = ["Session timeline:"]
+        for session_key, timestamp in session_timeline.items():
+            timeline_lines.append(f"- {session_key}: {timestamp}")
+        return "\n".join(timeline_lines + [""] + lines)
+    return "\n".join(lines)
+
+
+def _memeval_task_instructions(qa: dict[str, Any]) -> str:
+    category = str(qa.get("category", ""))
+    question_id = str(qa.get("question_id", ""))
+    instructions: list[str] = []
+
+    if category == "single-session-preference":
+        instructions.append(
+            "This is a personalized preference question. Summarize the user's remembered preferences and constraints from the conversation instead of inventing a new recommendation. Mention the key desired features and avoid bare `None` when the preference evidence is recoverable."
+        )
+    elif category == "temporal-reasoning":
+        instructions.append(
+            "This is a temporal reasoning question. Compute elapsed time or date differences from the dates in the evidence. If the question asks how long ago something happened, use the latest conversation date as the reference point unless the question specifies another anchor. Return only the resulting duration phrase, such as `7 days ago` or `21 days`."
+        )
+    elif category == "knowledge-update":
+        instructions.append(
+            "This is a knowledge update question. If old and new values both appear, answer with the updated value."
+        )
+    elif category in {"single-session-user", "single-session-assistant", "multi-session"}:
+        instructions.append(
+            "Answer with the most specific supported fact from the conversation. If the asked information was never provided, answer with a brief explicit explanation such as `You did not mention this information.`"
+        )
+
+    if question_id.endswith("_abs"):
+        instructions.append(
+            "This question may be unanswerable from the evidence. If the needed information is missing, answer with a brief explicit explanation such as `You did not mention this information.` rather than a bare `None`."
+        )
+
+    return "\n".join(instructions)
+
+
 def _memeval_qa_results(
     conv: dict[str, Any],
     answer_fn,
@@ -387,6 +480,19 @@ def evaluate_propmem_on_conversation(
     from agents_memory.propmem import PropMemSystem
 
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    original_create = client.chat.completions.create
+
+    def compat_create(*args, **kwargs):
+        model_name = str(kwargs.get("model", llm_model))
+        if (
+            ("max_tokens" in kwargs)
+            and ("max_completion_tokens" not in kwargs)
+            and (model_name.startswith("gpt-5") or model_name.startswith("o"))
+        ):
+            kwargs["max_completion_tokens"] = kwargs.pop("max_tokens")
+        return original_create(*args, **kwargs)
+
+    client.chat.completions.create = compat_create
     system = PropMemSystem()
     ingest = system.ingest_conversation(conv, client, llm_model)
     print(

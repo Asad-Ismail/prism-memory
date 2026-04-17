@@ -1,3 +1,5 @@
+[Back to Repo](../../README.md) · [Release Docs](README.md) · [Result Artifacts](../../results/README.md)
+
 # PRISM-Memory Extraction Skill
 
 **Hook:** Turn conversations into durable, searchable memory.
@@ -23,8 +25,8 @@ Canonical prompt:
 You are a memory extraction assistant. Given a conversation turn, extract 0-5 atomic, standalone facts. Each fact must be a complete sentence about a specific person, event, preference, or property. Include dates/times when mentioned. Skip greetings, filler, and questions. Output ONLY a JSON array of strings, e.g. ["fact1", "fact2"] or [].
 ```
 
-This prompt comes from
-`experiment15_learned_extraction.py`.
+This prompt comes from `experiment15_learned_extraction.py` in the upstream
+`better_memory` workspace.
 
 ## Inference Contract
 
@@ -111,3 +113,9 @@ Release only this extraction skill and only this checkpoint publicly:
 
 Treat all other checkpoints as internal ablations and learning artifacts, not as
 parallel public releases.
+
+Related docs:
+
+- [datasets.md](datasets.md)
+- [release-results.md](release-results.md)
+- [technical-blog.md](technical-blog.md)

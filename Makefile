@@ -21,7 +21,7 @@ synthetic-eval:
 	python scripts/run_synthetic_eval.py --candidate candidates/bootstrap_v0.yaml --dataset-size 8 --seed 7
 
 compile:
-	python -m compileall frontier_memory scripts space confirm_exp15_results.py build_scenario_comparisons.py
+	python -m compileall frontier_memory scripts space tests
 
 space-bundle:
 	bash scripts/deploy_space.sh

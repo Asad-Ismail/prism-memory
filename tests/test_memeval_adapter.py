@@ -4,6 +4,7 @@ import unittest
 
 from frontier_memory.config import load_candidate
 from frontier_memory.memeval_adapter import (
+    _memeval_task_instructions,
     apply_memeval_overrides,
     compute_memeval_summary,
     dialogue_turns_to_events,
@@ -42,6 +43,7 @@ class MemEvalAdapterTests(unittest.TestCase):
         self.assertEqual(tuned.get("llm", "prompt_profile"), "memeval_short_answer")
         self.assertEqual(tuned.get("llm", "refusal_text"), "None")
         self.assertGreaterEqual(tuned.get("llm", "context", "episodic_top_k"), 8)
+        self.assertEqual(tuned.get("benchmark_overrides", "memeval", "answer_mode"), "full_context")
 
     def test_compute_memeval_summary_handles_judge_and_accuracy(self) -> None:
         summary = compute_memeval_summary(
@@ -70,6 +72,14 @@ class MemEvalAdapterTests(unittest.TestCase):
         self.assertAlmostEqual(summary["overall_f1_mean"], 0.75)
         self.assertAlmostEqual(summary["judge"]["judge_pass_rate"], (0.5 + 1.0 + 0.5) / 3)
         self.assertAlmostEqual(summary["longmemeval_accuracy"], 0.5)
+
+    def test_task_instructions_cover_preference_and_temporal(self) -> None:
+        pref = _memeval_task_instructions({"category": "single-session-preference"})
+        temporal = _memeval_task_instructions({"category": "temporal-reasoning", "question_id": "abc_abs"})
+
+        self.assertIn("preference", pref.lower())
+        self.assertIn("temporal reasoning", temporal.lower())
+        self.assertIn("unanswerable", temporal.lower())
 
 
 if __name__ == "__main__":

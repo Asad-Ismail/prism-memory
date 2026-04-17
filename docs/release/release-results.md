@@ -1,3 +1,5 @@
+[Back to Repo](../../README.md) · [Release Docs](README.md) · [Result Artifacts](../../results/README.md)
+
 # PRISM-Memory Release Results
 
 This file summarizes the confirmed release metrics and the internal comparison
@@ -48,8 +50,13 @@ LongMemEval score and the strongest adversarial behavior.
 
 ## Artifact Files
 
-- `results/confirmed_exp15_summary.json`
-- `results/scenario_comparisons.json`
-- `results/locomo_pairwise_question_diffs.json`
-- `results/sft4.json`
+- [../../results/confirmed_exp15_summary.json](../../results/confirmed_exp15_summary.json)
+- [../../results/scenario_comparisons.json](../../results/scenario_comparisons.json)
+- [../../results/locomo_pairwise_question_diffs.json](../../results/locomo_pairwise_question_diffs.json)
+- [../../results/sft4.json](../../results/sft4.json)
 
+Related docs:
+
+- [extraction-skill.md](extraction-skill.md)
+- [datasets.md](datasets.md)
+- [model-card.md](model-card.md)

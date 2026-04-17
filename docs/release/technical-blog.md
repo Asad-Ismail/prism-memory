@@ -1,3 +1,5 @@
+[Back to Repo](../../README.md) · [Release Docs](README.md) · [Extraction Skill](extraction-skill.md)
+
 # PRISM-Memory: Turn Conversations Into Durable, Searchable Memory
 
 ## Summary
@@ -43,7 +45,7 @@ and one checkpoint publicly exposed:
   present, skip filler and questions, output JSON only
 
 That skill is documented directly in
-`MEMORY_EXTRACTION_SKILL.md`.
+[extraction-skill.md](extraction-skill.md).
 
 ## What Worked
 
@@ -169,9 +171,9 @@ retrieval stack at this model size.
 Public release surface:
 
 1. `PRISM-Memory`
-2. the single extraction skill in `MEMORY_EXTRACTION_SKILL.md`
+2. the single extraction skill in [extraction-skill.md](extraction-skill.md)
 3. the best confirmed checkpoint `exp15_sft_qwen7b_4ep`
-4. the best-only Space demo in `space/`
+4. the best-only Space demo in [../../space/](../../space/)
 
 Internal analysis artifacts can stay for provenance, but they should not be
 positioned as parallel public releases.

@@ -11,6 +11,8 @@ tags:
 - qwen2.5
 ---
 
+[Back to Repo](../../README.md) · [Release Docs](README.md) · [Release Results](release-results.md)
+
 # Model Card: PRISM-Memory
 
 **Hook:** Turn conversations into durable, searchable memory.
@@ -65,7 +67,7 @@ better public release trade-off.
 ## The Skill To Pair With This Model
 
 Public documentation should point to the single canonical extraction skill in
-`MEMORY_EXTRACTION_SKILL.md`.
+[extraction-skill.md](extraction-skill.md).
 
 That skill keeps the interface simple:
 
@@ -93,11 +95,11 @@ It is not intended to be used as a standalone assistant model.
 
 ## Release Artifacts
 
-- `MEMORY_EXTRACTION_SKILL.md`
-- `technical_blog.md`
-- `results/confirmed_exp15_summary.json`
-- `results/scenario_comparisons.json`
-- `space/app.py`
+- [extraction-skill.md](extraction-skill.md)
+- [technical-blog.md](technical-blog.md)
+- [../../results/confirmed_exp15_summary.json](../../results/confirmed_exp15_summary.json)
+- [../../results/scenario_comparisons.json](../../results/scenario_comparisons.json)
+- [../../space/app.py](../../space/app.py)
 
 ## Publishing Note
 

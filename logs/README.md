@@ -3,6 +3,11 @@
 This directory is append-only and belongs to the broader `frontier_memory`
 research harness, not just the public `PRISM-Memory` release.
 
+See also:
+
+- [../docs/research/README.md](../docs/research/README.md)
+- [../contract/README.md](../contract/README.md)
+
 ## Files
 
 - `journal.md`: human-readable reasoning, pivots, failures, and next actions

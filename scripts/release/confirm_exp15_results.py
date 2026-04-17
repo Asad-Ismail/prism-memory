@@ -22,11 +22,11 @@ import time
 from pathlib import Path
 
 import numpy as np
-import torch
 
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
-ROOT = Path(__file__).resolve().parent
+SCRIPT_DIR = Path(__file__).resolve().parent
+ROOT = SCRIPT_DIR.parents[1]
 
 
 def _resolve_better_memory_root() -> Path:
@@ -106,6 +106,7 @@ def patch_learned_extractor() -> None:
     ensure_paths()
     from peft import AutoPeftModelForCausalLM
     from transformers import AutoTokenizer, BitsAndBytesConfig
+    import torch
 
     import experiment15_learned_extraction as e15
 
@@ -194,6 +195,7 @@ def eval_checkpoint(alias: str, args: argparse.Namespace) -> dict:
     ensure_paths()
     import experiment15_learned_extraction as e15
     from experiment9_learned_encoder import LME_CATEGORY_NAMES, LOCOMO_CATEGORY_NAMES
+    import torch
 
     ckpt = CHECKPOINTS[alias]
     if not ckpt.exists():

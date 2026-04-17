@@ -1,22 +1,26 @@
 # Examples
 
-These examples make the release contract concrete without requiring the LoRA
+These examples make the release behavior concrete without requiring the LoRA
 weights or the full benchmark data.
 
 ## Files
 
-- `sample_dialogue.txt`: a short multi-turn conversation with a dated update
-- `sample_extraction.json`: the atomic propositions the extractor should write
-- `sample_recall.md`: a small retrieval-style recall task over those facts
+| File | Purpose |
+|---|---|
+| `sample_dialogue.txt` | a short conversation with a dated update |
+| `sample_extraction.json` | the atomic facts the extractor should write |
+| `sample_recall.md` | a retrieval-style recall question over those facts |
 
-## Why These Examples Exist
+## How To Use Them
 
-The public release is deliberately narrow: one extraction skill, one benchmarked
-checkpoint, one demo. These files help explain the system at that same level:
+Use these files when you want to:
 
-1. what kind of dialogue goes in
-2. what proposition memory should come out
-3. what a downstream recall question looks like
+1. explain the extraction contract quickly
+2. review prompt behavior on a stable toy case
+3. sanity-check downstream recall logic before running a full benchmark
 
-Use them for docs, quick reviews, or prompt regression checks before running the
-full benchmark stack.
+Related docs:
+
+- [../docs/release/extraction-skill.md](../docs/release/extraction-skill.md)
+- [../docs/release/technical-blog.md](../docs/release/technical-blog.md)
+- [../space/README.md](../space/README.md)

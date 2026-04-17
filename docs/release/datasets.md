@@ -1,3 +1,5 @@
+[Back to Repo](../../README.md) · [Release Docs](README.md) · [Release Results](release-results.md)
+
 # PRISM-Memory Datasets
 
 This file separates the data used by the public `PRISM-Memory` release from the
@@ -75,3 +77,8 @@ research story, but they are not the main public training recipe.
 4. More original LME data was not automatically better because noisy temporal
    labels compounded the anchor-loss problem.
 
+Related docs:
+
+- [extraction-skill.md](extraction-skill.md)
+- [release-results.md](release-results.md)
+- [technical-blog.md](technical-blog.md)

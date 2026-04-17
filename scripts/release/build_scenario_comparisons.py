@@ -8,8 +8,6 @@ import os
 import re
 from pathlib import Path
 
-import torch
-
 from confirm_exp15_results import (
     CHECKPOINTS,
     build_cache_only_qa,
@@ -18,8 +16,9 @@ from confirm_exp15_results import (
     patch_learned_extractor,
 )
 
-ROOT = Path(__file__).resolve().parent
-SHORTLIST_PATH = ROOT / "scenario_shortlist.json"
+SCRIPT_DIR = Path(__file__).resolve().parent
+ROOT = SCRIPT_DIR.parents[1]
+SHORTLIST_PATH = SCRIPT_DIR / "scenario_shortlist.json"
 OUT_PATH = ROOT / "results" / "scenario_comparisons.json"
 LOCOMO_PATH = Path(os.environ.get("PRISM_LOCOMO_PATH", "/tmp/locomo10.json"))
 
@@ -183,6 +182,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--models", default="sft4")
     args = parser.parse_args()
+    import torch
 
     ensure_datasets()
     patch_learned_extractor()

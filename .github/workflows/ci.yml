@@ -28,7 +28,7 @@ jobs:
 
       - name: Compile source
         run: |
-          python -m compileall frontier_memory scripts space confirm_exp15_results.py build_scenario_comparisons.py
+          python -m compileall frontier_memory scripts space tests
 
       - name: Run tests
         run: |

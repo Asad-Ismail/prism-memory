@@ -1,4 +1,6 @@
-# frontier memory autoresearch
+[Back to Repo](../../README.md) · [Research Docs](README.md) · [Contracts](../../contract/README.md)
+
+# Frontier Memory Research Program
 
 This file is the operating note for the `frontier_memory` research harness that
 lives alongside the public `PRISM-Memory` release.
@@ -17,7 +19,7 @@ Find the best-performing memory system we can build right now, while keeping eve
 
 ## Default Loop
 
-1. Read `README.md`, `contract/SEARCH_CONTRACT.md`, the latest entries in `logs/journal.md`, and the active candidate YAML.
+1. Read the root `README.md`, [../../contract/SEARCH_CONTRACT.md](../../contract/SEARCH_CONTRACT.md), the latest entries in [../../logs/journal.md](../../logs/journal.md), and the active candidate YAML.
 2. If runtime behavior is broken, fix the memory engine before adding more search surface.
 3. Choose one hypothesis only.
 4. Mutate a narrow surface:

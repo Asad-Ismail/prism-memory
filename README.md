@@ -13,24 +13,37 @@
 
 <p align="center"><strong>Turn conversations into durable, searchable memory.</strong></p>
 
-<p align="center"><em>Proposition-level memory extraction for long-term dialogue, with a public Space demo and a broader hybrid-memory research harness.</em></p>
+<p align="center"><em>Proposition-level conversational memory with one public extraction skill, one benchmarked release checkpoint, a live Space demo, and a broader hybrid-memory research harness.</em></p>
 
 <p align="center">
   <a href="https://huggingface.co/spaces/AsadIsmail/prism-memory">Live Space</a> ·
-  <a href="RELEASE_RESULTS.md">Confirmed Results</a> ·
-  <a href="technical_blog.md">Technical Blog</a>
+  <a href="docs/release/README.md">Release Docs</a> ·
+  <a href="docs/research/README.md">Research Docs</a>
 </p>
 
 ![PRISM-Memory architecture](assets/prism-memory-architecture.svg)
 
-This repository has one clear public identity:
+## What PRISM-Memory Is
 
-1. the released `PRISM-Memory` extraction skill and demo
-2. the `frontier_memory` research harness used to keep iterating on hybrid
-   memory systems
+`PRISM-Memory` is not a chatbot wrapper and not a generic memory benchmark dump.
+The public release is intentionally narrow:
 
-The public release is centered on one checkpoint, one extraction behavior, and
-one demo surface instead of exposing every intermediate experiment.
+1. one proposition extraction skill
+2. one public checkpoint: `exp15_sft_qwen7b_4ep`
+3. one public demo surface in `space/`
+
+The broader `frontier_memory` package stays in the repo because it is the
+actual runtime and research harness used to test memory behavior across
+synthetic, TravelPlanner, ALFWorld, MemoryArena, and MemEval surfaces.
+
+## Confirmed Release Metrics
+
+| Checkpoint | LoCoMo | LongMemEval | Notes |
+|---|---:|---:|---|
+| `exp15_sft_qwen7b_4ep` | `0.4981` | `0.4768` | public release checkpoint |
+
+Full release numbers, breakdowns, and artifact notes live in
+[docs/release/release-results.md](docs/release/release-results.md).
 
 ## Demo In 60 Seconds
 
@@ -40,308 +53,127 @@ bash scripts/setup.sh --space
 python space/app.py
 ```
 
-That launches the same lightweight PRISM-Memory Space locally with:
+That launches the same public demo locally with:
 
-- the released checkpoint metrics
-- benchmark cases showing strengths and failure modes
+- the confirmed release metrics
+- curated benchmark cases showing strengths and failure modes
 - the single canonical extraction skill
 
-## What This Repo Releases
+## Repository Guide
 
-- A proposition-level conversational memory extractor
-- The canonical extraction contract in `MEMORY_EXTRACTION_SKILL.md`
-- Confirmed benchmark artifacts for `exp15_sft_qwen7b_4ep`
-- A lightweight Gradio Space in `space/`
-- The broader research harness in `frontier_memory/`
+Use these README files as the real entry points to the repo:
 
-## Main Contribution
+| Where to start | What it covers |
+|---|---|
+| [docs/README.md](docs/README.md) | top-level documentation index |
+| [docs/release/README.md](docs/release/README.md) | the public release story: skill, datasets, results, model card, blog |
+| [docs/research/README.md](docs/research/README.md) | the internal research program, contracts, and logging surface |
+| [space/README.md](space/README.md) | the Gradio demo and Hugging Face Space bundle |
+| [scripts/README.md](scripts/README.md) | setup, release helpers, and benchmark entrypoints |
+| [frontier_memory/README.md](frontier_memory/README.md) | code-level map of the runtime and benchmark adapters |
+| [candidates/README.md](candidates/README.md) | promoted policies and benchmark champions |
+| [results/README.md](results/README.md) | tracked public artifacts and internal comparison payloads |
+| [examples/README.md](examples/README.md) | the smallest end-to-end extraction and recall examples |
+| [external/README.md](external/README.md) | optional local benchmark checkouts and env hooks |
+| [tests/README.md](tests/README.md) | regression coverage and fixture layout |
 
-The central claim is narrow and defendable:
-
-`PRISM-Memory` replaces GPT-4.1 proposition extraction with a fine-tuned
-`Qwen2.5-7B-Instruct` LoRA adapter while staying competitive on long-horizon
-dialogue benchmarks.
-
-This repo is not a general chatbot package. The released model is a
-memory-writing component inside a larger retrieval system.
-
-## Confirmed Release Results
-
-| Checkpoint | LoCoMo | LongMemEval | Notes |
-|---|---:|---:|---|
-| `exp15_sft_qwen7b_4ep` | `0.4981` | `0.4768` | release checkpoint |
-
-The public release centers on a single checkpoint. The full confirmed summary is
-in `RELEASE_RESULTS.md` and `results/confirmed_exp15_summary.json`.
-
-## Features
-
-- proposition-level memory extraction from dialogue turns
-- hybrid retrieval with sparse, dense, and reranked memory lookup
-- release artifacts for benchmark confirmation and case studies
-- a self-contained Gradio Space demo
-- a research harness for synthetic, procedural, and agent-memory benchmarks
-- adapters for TravelPlanner, ALFWorld, MemoryArena, and MemEval surfaces
-
-## Repository Layout
+## Project Layout
 
 | Path | Purpose |
 |---|---|
-| `assets/` | diagrams and public repo visuals |
-| `examples/` | small end-to-end examples of dialogue, memory, and recall |
-| `frontier_memory/` | research runtime and search harness |
-| `space/` | lightweight public demo and Hugging Face Space bundle |
-| `results/` | release-facing evaluation artifacts |
-| `scripts/` | benchmark and search entrypoints |
-| `tests/` | regression and smoke tests |
-| `candidates/` | search candidates and promoted policies |
-| `contract/` | benchmark/search contracts |
-| `logs/` | append-only research logs |
-| `external/` | optional local benchmark checkouts documented for the harness |
+| `assets/` | repo visuals |
+| `docs/` | release docs and research docs |
+| `examples/` | toy dialogue, extraction, and recall examples |
+| `frontier_memory/` | runtime package, search logic, and benchmark adapters |
+| `space/` | first-class Gradio demo and Space bundle |
+| `results/` | release-facing JSON artifacts kept small and readable |
+| `scripts/` | setup, release helpers, and benchmark runners |
+| `candidates/` | YAML policies and promoted champions |
+| `contract/` | scoring and search contracts |
+| `logs/` | append-only research notes and experiment history |
+| `external/` | optional local benchmark checkouts, not part of the public payload |
+| `tests/` | regression tests and committed fixtures |
 
-## Documentation
+## Common Tasks
 
-- `MEMORY_EXTRACTION_SKILL.md`: the single extraction skill to keep
-- `technical_blog.md`: technical write-up of what worked and what failed
-- `model_card.md`: draft model card for a future weight release
-- `DATASETS.md`: training, evaluation, and auxiliary data summary
-- `RELEASE_RESULTS.md`: confirmed release metrics and comparison notes
-- `CONTRIBUTING.md`: contributor setup and repo hygiene rules
-- `program.md`: internal research program for the autoresearch loop
-
-## Installation
-
-Install the basic repo dependencies:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-Install as a package:
+Install the repo:
 
 ```bash
 python -m pip install -e .
 ```
 
-Install dev extras:
-
-```bash
-python -m pip install -e ".[dev]"
-```
-
-or:
-
-```bash
-python -m pip install -r requirements-dev.txt
-```
-
-Install the Space dependencies:
-
-```bash
-python -m pip install -r space/requirements.txt
-```
-
-## Quick Start
-
-Run the public demo locally:
-
-```bash
-python space/app.py
-```
-
-or:
+Run the demo:
 
 ```bash
 make demo
 ```
 
-Bootstrap a full local environment with the helper script:
-
-```bash
-bash scripts/setup.sh
-```
-
-Run the synthetic benchmark smoke test:
-
-```bash
-python scripts/run_synthetic_eval.py --candidate candidates/bootstrap_v0.yaml --dataset-size 8 --seed 7
-```
-
-or:
-
-```bash
-make synthetic-eval
-```
-
-Run one search iteration:
-
-```bash
-python scripts/run_search_iteration.py --base-candidate candidates/bootstrap_v0.yaml --num-children 4 --dataset-size 4 --seed 17
-```
-
-Run the TravelPlanner benchmark:
-
-```bash
-export PRISM_TRAVELPLANNER_ROOT=/path/to/TravelPlanner
-python scripts/run_travelplanner_eval.py \
-  --policy-file candidates/travelplanner_champion.yaml \
-  --output-jsonl logs/runs/travelplanner_bootstrap_v0_validation.jsonl \
-  --summary-path logs/runs/travelplanner_bootstrap_v0_validation_scores.json
-```
-
-Without `PRISM_TRAVELPLANNER_ROOT`, the repo falls back to a tiny committed
-TravelPlanner fixture that is only meant for tests and smoke checks.
-
-Run the full public MemoryArena suite:
-
-```bash
-python scripts/run_memoryarena_suite.py --output logs/runs/memoryarena_suite_v2.json
-```
-
-Run the MemEval adapter on a small benchmark slice:
-
-```bash
-python scripts/run_memeval_eval.py --benchmark locomo --num-samples 1 --skip-judge
-```
-
-Run the promoted OpenAI-backed synthetic memory benchmark:
-
-```bash
-python scripts/run_openai_synthetic_eval.py \
-  --base-candidate candidates/openai_memory_champion.yaml \
-  --model gpt-5.2 \
-  --reasoning-effort medium \
-  --dataset-size 2 \
-  --seed 21 \
-  --output logs/runs/openai_gpt52_medium_eval2_v3.json
-```
-
-Summarize the offline frontier benchmark status:
-
-```bash
-python scripts/summarize_offline_frontier.py --output logs/runs/offline_frontier_summary_v1.json
-```
-
-## Examples
-
-The repo includes small concrete examples under `examples/` so the extraction
-contract is visible without downloading weights or benchmarks:
-
-- `examples/sample_dialogue.txt`: a short conversation with temporal updates
-- `examples/sample_extraction.json`: the atomic facts the skill should write
-- `examples/sample_recall.md`: a retrieval-style recall question over those facts
-- `examples/README.md`: how these examples map to the release skill
-
-Use them when you want to explain the system quickly or validate prompt changes
-against a stable toy case.
-
-## Datasets
-
-The public release was trained mostly on synthetic long-horizon conversations
-with GPT-4.1-derived proposition labels.
-
-The raw source data is documented here, but it was generated in the upstream
-`better_memory` experiment workspace and is not bundled in this repo.
-
-Core files:
-
-- `train.jsonl`: raw synthetic training conversations
-- `train_sft.jsonl`: GPT-4.1 proposition extractions used for SFT
-- `eval.jsonl`: raw held-out evaluation conversations
-- `eval_sft.jsonl`: GPT-4.1 PropMem reference extractions
-
-Auxiliary LoCoMo-targeted files exist for ablations, but the public release did
-not come from heavy LoCoMo-domain training. The full breakdown is in
-`DATASETS.md`.
-
-## Research Harness
-
-The `frontier_memory` package is still here because it is part of the actual
-research workflow, not an unrelated add-on.
-
-It includes:
-
-- append-only episodic memory
-- semantic fact storage and update handling
-- procedural memory induction
-- consolidation passes
-- a search loop for candidate mutation and promotion
-- adapters for synthetic, TravelPlanner, ALFWorld, MemoryArena, and MemEval surfaces
-
-Current promoted benchmark policies:
-
-- `candidates/travelplanner_champion.yaml`
-- `candidates/alfworld_champion.yaml`
-- `candidates/memoryarena_archive_champion.yaml`
-- `candidates/openai_memory_champion.yaml`
-
-The active research notes and contracts live in:
-
-- `program.md`
-- `contract/SEARCH_CONTRACT.md`
-- `logs/journal.md`
-- `logs/experiments.jsonl`
-
-## External Benchmarks
-
-Optional benchmark checkouts stay outside the committed GitHub payload and are
-ignored by `.gitignore`. See `external/README.md` for the expected local layout
-and the `PRISM_TRAVELPLANNER_ROOT` override for full TravelPlanner evaluation.
-
-## Current Offline Frontier Status
-
-The current offline benchmark ceiling in this repo is:
-
-- TravelPlanner full validation: `1.0` final pass rate
-- ALFWorld `valid_seen` slice: `1.0`
-- ALFWorld `valid_unseen` slice: `1.0`
-- MemoryArena public suite: `1.0` overall task exact match
-
-The tracked summary for those results is in
-`results/frontier_memory_benchmarks.json`.
-
-The MemoryArena ceiling run uses archive-backed episodic replay plus a local
-heuristic fallback for unmatched tasks. The archived benchmark policy is
-`candidates/memoryarena_archive_champion.yaml`.
-
-Local run dumps under `logs/runs/` are intentionally ignored from the first
-public commit. Regenerate them locally from the commands above when you want the
-full benchmark traces.
-
-## Space Demo
-
-The public demo lives in `space/`, following the same layout style used in the
-`lore` repo.
-
-Prepare a clean Space bundle locally:
-
-```bash
-bash scripts/deploy_space.sh
-```
-
-Upload the same bundle to Hugging Face:
-
-```bash
-bash scripts/deploy_space.sh AsadIsmail/prism-memory
-```
-
-## Tests
-
 Run the core test suite:
 
 ```bash
-python -m unittest discover -s tests -p 'test_*.py' -v
+make test
 ```
 
-`tests/test_alfworld_benchmark.py` depends on optional ALFWorld and TextWorld
-setup.
+Build a clean Space bundle:
 
-The repo also includes a deterministic committed TravelPlanner fixture for tests,
-so the default suite does not need a live dataset pull.
+```bash
+make space-bundle
+```
+
+Run a benchmark entrypoint:
+
+```bash
+python scripts/run_synthetic_eval.py --candidate candidates/bootstrap_v0.yaml --dataset-size 8 --seed 7
+python scripts/run_travelplanner_eval.py --policy-file candidates/travelplanner_champion.yaml
+python scripts/run_memeval_eval.py --benchmark locomo --num-samples 1 --skip-judge
+```
+
+The full command guide is in [scripts/README.md](scripts/README.md).
+
+## Release Surface
+
+The public release documents are split cleanly under `docs/release/`:
+
+| Doc | Why it exists |
+|---|---|
+| [docs/release/extraction-skill.md](docs/release/extraction-skill.md) | the single extraction behavior to keep |
+| [docs/release/datasets.md](docs/release/datasets.md) | what data trained and evaluated the release |
+| [docs/release/release-results.md](docs/release/release-results.md) | confirmed metrics and internal comparison notes |
+| [docs/release/technical-blog.md](docs/release/technical-blog.md) | lessons learned from the repo history |
+| [docs/release/model-card.md](docs/release/model-card.md) | draft HF model card for future weight release |
+
+## Current Benchmark Status
+
+Tracked public benchmark status in this repo:
+
+- PRISM release checkpoint: LoCoMo `0.4981`, LongMemEval `0.4768`
+- TravelPlanner validation champion: `1.0`
+- ALFWorld seen champion: `1.0`
+- ALFWorld unseen champion: `1.0`
+- MemoryArena public suite: `1.0`
+
+Those tracked artifacts are summarized in:
+
+- [results/README.md](results/README.md)
+- [results/frontier_memory_benchmarks.json](results/frontier_memory_benchmarks.json)
+
+## Optional Local Benchmark Checkouts
+
+The public GitHub repo does not vendor full benchmark assets. For full local
+evaluation, point the runtime at local checkouts documented in
+[external/README.md](external/README.md).
+
+Most important env hooks:
+
+- `PRISM_TRAVELPLANNER_ROOT`
+- `PRISM_TRAVELPLANNER_VALIDATION_PATH`
+- `BETTER_MEMORY_ROOT`
+- `MEMEVAL_ROOT`
+- `PRISM_LOCOMO_PATH`
 
 ## Notes
 
-- The public release surface is intentionally narrow: one skill, one checkpoint,
-  one demo.
-- The Hugging Face Space can be published from `space/`.
-- The adapter weights are not included in this repo.
+- The adapter weights are not bundled in this repo.
+- The current public demo is the Hugging Face Space plus the local `space/` app.
+- The repo keeps research provenance, but the public narrative is intentionally
+  smaller than the full experiment history.

@@ -69,8 +69,11 @@ class OpenAIMemoryBackend:
         question: str,
         evidence_text: str,
         heuristic_answer: Optional[str] = None,
+        task_instructions: Optional[str] = None,
     ) -> str:
         system_prompt = self._system_prompt()
+        if task_instructions:
+            system_prompt = f"{system_prompt}\nAdditional task instructions:\n{task_instructions}"
         user_prompt = (
             f"Question:\n{question}\n\n"
             f"Heuristic draft:\n{heuristic_answer or '(none)'}\n\n"
@@ -147,8 +150,9 @@ class MockMemoryBackend:
         question: str,
         evidence_text: str,
         heuristic_answer: Optional[str] = None,
+        task_instructions: Optional[str] = None,
     ) -> str:
-        del question, evidence_text
+        del question, evidence_text, task_instructions
         if self.mode == "echo_heuristic" and heuristic_answer:
             return heuristic_answer
         return self.answer_text

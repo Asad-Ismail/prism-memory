@@ -7,14 +7,27 @@ import gradio as gr
 import pandas as pd
 
 APP_DIR = Path(__file__).resolve().parent
-if (APP_DIR / "MEMORY_EXTRACTION_SKILL.md").exists() or (APP_DIR / "results").exists():
-    ROOT = APP_DIR
-else:
-    ROOT = APP_DIR.parent
+
+
+def _resolve_root() -> Path:
+    for candidate in (APP_DIR, APP_DIR.parent):
+        if (candidate / "results" / "confirmed_exp15_summary.json").exists():
+            return candidate
+        if (candidate / "docs" / "release" / "extraction-skill.md").exists():
+            return candidate
+        if (candidate / "MEMORY_EXTRACTION_SKILL.md").exists():
+            return candidate
+    return APP_DIR.parent
+
+
+ROOT = _resolve_root()
 RESULTS_DIR = ROOT / "results"
 SUMMARY_PATH = RESULTS_DIR / "confirmed_exp15_summary.json"
 SCENARIO_PATH = RESULTS_DIR / "scenario_comparisons.json"
-SKILL_PATH = ROOT / "MEMORY_EXTRACTION_SKILL.md"
+SKILL_CANDIDATES = [
+    ROOT / "docs" / "release" / "extraction-skill.md",
+    ROOT / "MEMORY_EXTRACTION_SKILL.md",
+]
 LOCOMO_CATEGORY_NAMES = {
     "1": "factual",
     "2": "temporal",
@@ -47,9 +60,10 @@ def _load_scenarios() -> dict:
 
 
 def _load_skill() -> str:
-    if not SKILL_PATH.exists():
-        return "Skill document not found."
-    return SKILL_PATH.read_text()
+    for path in SKILL_CANDIDATES:
+        if path.exists():
+            return path.read_text()
+    return "Skill document not found."
 
 
 def _best_result() -> dict | None:

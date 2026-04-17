@@ -25,10 +25,11 @@ The app reads:
 
 - `results/confirmed_exp15_summary.json`
 - `results/scenario_comparisons.json`
-- `MEMORY_EXTRACTION_SKILL.md`
+- `docs/release/extraction-skill.md`
 
 When copied into a standalone Hugging Face Space repo, keep those files beside
-`app.py` and `requirements.txt`.
+`app.py` and `requirements.txt`, preserving the `docs/release/` and `results/`
+subdirectories.
 
 ## What It Shows
 
@@ -48,3 +49,9 @@ python app.py
 ```bash
 bash scripts/deploy_space.sh
 ```
+
+Related docs:
+
+- [../docs/release/extraction-skill.md](../docs/release/extraction-skill.md)
+- [../docs/release/release-results.md](../docs/release/release-results.md)
+- [../results/README.md](../results/README.md)
