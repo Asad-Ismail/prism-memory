@@ -128,7 +128,6 @@ def evaluate_candidate_on_conversation(
 ) -> list[dict[str, Any]]:
     ensure_memeval_imports()
     from agents_memory.locomo import extract_dialogues
-    from agents_memory.systems._helpers import _qa_results
 
     system = HybridMemorySystem(candidate)
     system.reset()
@@ -140,7 +139,7 @@ def evaluate_candidate_on_conversation(
     def answer_fn(question: str) -> str:
         return normalize_memeval_prediction(system.answer(question))
 
-    return _qa_results(
+    return _memeval_qa_results(
         conv,
         answer_fn,
         run_judge,
@@ -273,10 +272,6 @@ def evaluate_registry_system_on_benchmark(
     run_judge: bool = False,
 ) -> MemEvalRunResult:
     ensure_memeval_imports()
-    from agents_memory.systems import SYSTEMS
-
-    if system_name not in SYSTEMS:
-        raise ValueError(f"Unknown MemEval system: {system_name}")
 
     bench, conversations = load_memeval_benchmark(
         benchmark,
@@ -289,16 +284,20 @@ def evaluate_registry_system_on_benchmark(
     benchmark_name = str(bench.get("name", benchmark))
 
     rows: list[dict[str, Any]] = []
-    run_fn = SYSTEMS[system_name]["fn"]
+    system_key = system_name.lower()
+    if system_key != "propmem":
+        raise ValueError(
+            f"Unsupported compare system: {system_name}. Currently supported: propmem"
+        )
     print(f"Evaluating baseline {system_name} on {benchmark_name} ({len(conversations)} samples)")
     for index, conv in enumerate(conversations, start=1):
         sample_id = conv.get("sample_id", f"sample-{index}")
         print(f"  Conversation {index}/{len(conversations)}: {sample_id}")
         rows.extend(
-            run_fn(
+            evaluate_propmem_on_conversation(
                 conv,
-                llm_model,
-                run_judge,
+                llm_model=llm_model,
+                run_judge=run_judge,
                 category_names=category_names,
                 judge_fn=judge_fn,
             )
@@ -319,3 +318,86 @@ def evaluate_registry_system_on_benchmark(
 def load_candidate_for_memeval(path: str | Path, *, memeval_tuned: bool = True) -> CandidateConfig:
     candidate = load_candidate(path)
     return apply_memeval_overrides(candidate) if memeval_tuned else candidate
+
+
+def _memeval_qa_results(
+    conv: dict[str, Any],
+    answer_fn,
+    run_judge: bool,
+    *,
+    category_names: dict[Any, str] | None = None,
+    judge_fn: str | None = None,
+) -> list[dict[str, Any]]:
+    ensure_memeval_imports()
+    from agents_memory.evaluation import compute_f1, evaluate_longmemeval, evaluate_with_judge
+    from agents_memory.locomo import CATEGORY_NAMES as default_categories
+
+    categories = category_names or default_categories
+    qa_pairs = conv.get("qa", [])
+    sample_id = conv.get("sample_id", "unknown")
+    rows: list[dict[str, Any]] = []
+
+    for index, qa in enumerate(qa_pairs, start=1):
+        question = qa.get("question", "")
+        ground_truth = qa.get("answer", "")
+        category = qa.get("category", 0)
+        question_id = qa.get("question_id", "")
+        try:
+            predicted = answer_fn(question)
+        except Exception as exc:
+            print(f"    Error on Q{index}: {exc}")
+            predicted = "None"
+
+        row = {
+            "sample_id": sample_id,
+            "question": question,
+            "ground_truth": ground_truth,
+            "predicted": predicted,
+            "category": category,
+            "category_name": categories.get(category, str(category)),
+            "f1": compute_f1(predicted, ground_truth),
+        }
+        if run_judge:
+            if judge_fn == "longmemeval":
+                row.update(
+                    evaluate_longmemeval(
+                        question,
+                        ground_truth,
+                        predicted,
+                        category=str(category),
+                        question_id=question_id,
+                    )
+                )
+            else:
+                row.update(evaluate_with_judge(question, ground_truth, predicted))
+        rows.append(row)
+    return rows
+
+
+def evaluate_propmem_on_conversation(
+    conv: dict[str, Any],
+    *,
+    llm_model: str,
+    run_judge: bool,
+    category_names: dict[Any, str] | None = None,
+    judge_fn: str | None = None,
+) -> list[dict[str, Any]]:
+    ensure_memeval_imports()
+    from openai import OpenAI
+    from agents_memory.propmem import PropMemSystem
+
+    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    system = PropMemSystem()
+    ingest = system.ingest_conversation(conv, client, llm_model)
+    print(
+        f"    Ingested: chunks={ingest['num_chunks']}, "
+        f"propositions={ingest['num_propositions']}, "
+        f"clusters={ingest.get('num_clusters', 0)}"
+    )
+    return _memeval_qa_results(
+        conv,
+        lambda q: normalize_memeval_prediction(system.answer_question(q, client, llm_model)["answer"]),
+        run_judge,
+        category_names=category_names,
+        judge_fn=judge_fn,
+    )
