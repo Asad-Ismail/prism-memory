@@ -8,6 +8,9 @@
 dialogue into proposition-level memory and retrieves it with an inspectable
 hybrid stack.
 
+The point is not that a 7B model chats well. The point is that a 7B open model
+can write memory records that another system can actually use later.
+
 This package now ships one public extraction skill and one public checkpoint:
 
 - **Checkpoint:** `exp15_sft_qwen7b_4ep`
@@ -18,6 +21,70 @@ This package now ships one public extraction skill and one public checkpoint:
 The public hook is simple:
 
 **PRISM-Memory turns conversations into durable, searchable memory.**
+
+## Why This Is Useful In Practice
+
+A memory writer is only interesting if a later system can ask a pointed
+question and get back a useful answer without rereading the original chat. The
+public release artifacts already show that pattern.
+
+### 1. Keep hard limits and preferences available for later work
+
+The extractor can turn a single conversational turn into stable memory like:
+
+- GitHub Actions concurrency limit: `20` concurrent jobs
+- Snyk Slack notifications should be aggregated and concise
+
+That means a later system can answer:
+
+> What is our GitHub Actions concurrency limit, and how should Snyk alerts look?
+
+with:
+
+> `20` concurrent jobs. Alerts should be aggregated and concise.
+
+That is a real product use case. Teams mention constraints and preferences once,
+then expect downstream tools and agents to remember them.
+
+### 2. Keep current state separate from the roadmap
+
+The released extractor can also preserve the difference between what is true
+now and what is only planned:
+
+- sidecar CPU limits are already set and monitored
+- mTLS is planned for phase two
+- rollout strategy is canary deployments plus traffic splitting
+
+So a later question like:
+
+> Did we already enable mTLS, and what rollout strategy are we planning?
+
+can be answered without confusing the present state with the future plan.
+
+This is a core memory problem, not a style problem. Chat history tends to blur
+these states together.
+
+### 3. Answer dated questions with dated evidence
+
+One confirmed held-out benchmark case asks:
+
+> Which hobby did Sam take up in May 2023?
+
+The retrieved memory contains explicit dated propositions about Sam trying
+painting in May 2023, and the released system answers:
+
+> painting
+
+That matters because the useful behavior is not “remember that hobbies were
+discussed.” The useful behavior is “recover the dated fact that actually
+answers the later question.”
+
+There is a fourth practical behavior that matters too: refusal. On the held-out
+adversarial guitar case, the released model returns `None` instead of inventing
+a reason for an unsupported premise. That is also part of being useful.
+
+For the compact scenario version of this story, see
+[memory-scenarios.md](memory-scenarios.md).
 
 ## What The Repo Actually Contributed
 

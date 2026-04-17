@@ -1,4 +1,4 @@
-.PHONY: install install-dev test test-fast demo synthetic-eval compile space-bundle
+.PHONY: install install-dev test test-fast demo synthetic-eval compile model-bundle space-bundle
 
 install:
 	python -m pip install -e .
@@ -22,6 +22,9 @@ synthetic-eval:
 
 compile:
 	python -m compileall frontier_memory scripts space tests
+
+model-bundle:
+	bash scripts/deploy_model.sh
 
 space-bundle:
 	bash scripts/deploy_space.sh

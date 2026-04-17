@@ -5,6 +5,17 @@
 This file separates the data used by the public `PRISM-Memory` release from the
 auxiliary datasets that were only useful for ablations.
 
+## Data Provenance
+
+The release training data is **synthetic**.
+
+- The conversation source was programmatically generated to stress long-horizon
+  memory behavior such as inserts, updates, deletes, contradiction handling,
+  and multi-session recall.
+- The SFT labels were then derived from those synthetic conversations with a
+  GPT-4.1 proposition extractor.
+- No real end-user chat logs are part of this public release story.
+
 ## Released Training Recipe
 
 The released checkpoint is `exp15_sft_qwen7b_4ep`.
@@ -29,6 +40,24 @@ The underlying synthetic conversation source lives in the upstream
 The source generator was built to create long-horizon memory stress cases with
 inserts, updates, deletes, and multi-session recall.
 
+## Example Training Item
+
+This is the shape of the data the model learned from: a synthetic dialogue turn
+paired with proposition-style extraction targets.
+
+**Synthetic turn**
+
+> yeah, I think starting with incremental scans and parallel matrix jobs makes sense. We have 20 concurrent jobs max on GitHub Actions currently. Also want to keep Slack notifications from Snyk consistent with other pipeline alerts, aggregated and concise.
+
+**Target propositions**
+
+- GitHub Actions concurrency limit: 20 concurrent jobs
+- Wants Snyk Slack notifications aggregated and concise, consistent with other pipeline alerts
+
+This example is illustrative of the release data format. The exact public
+release checkpoint was trained on the larger `train_sft.jsonl` corpus, not on
+just this slice.
+
 ## Derived SFT Data
 
 These are GPT-4.1-derived proposition labels built on top of the raw
@@ -52,6 +81,23 @@ The released model was evaluated on two held-out surfaces:
 
 Both the GPT-4.1 extraction baseline and the released 7B extractor were scored
 with the same GPT-4.1 QA evaluator and the same cache-backed answer surface.
+
+## What Is Public Right Now
+
+Public now:
+
+- dataset description and counts
+- held-out extraction examples
+- release metrics and benchmark breakdowns
+
+Not public yet:
+
+- the raw `train.jsonl` and `eval.jsonl` conversation files
+- the full `train_sft.jsonl` and `train_sft_clean_merged.jsonl` label files
+- the auxiliary LoCoMo ablation JSONLs
+
+So the current release makes the **data recipe** public, but not the full raw
+training corpora.
 
 ## Auxiliary LoCoMo Datasets
 

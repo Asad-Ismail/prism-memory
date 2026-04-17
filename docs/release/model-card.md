@@ -36,6 +36,14 @@ line.
 retrieves those propositions with a hybrid retrieval system. The model is not a
 general chat model. It is a memory-writing component.
 
+## Data Summary
+
+- **Conversation source:** synthetic multi-session memory conversations
+- **Label source:** GPT-4.1-derived proposition extractions
+- **Released training slice:** `20k` examples sampled from `train_sft.jsonl`
+- **Public status:** the release documents the data recipe and examples, but the
+  full raw training JSONL files are not published in this repo
+
 ## Confirmed Results
 
 The checkpoint was reproduced locally on the original evaluation surface.
@@ -103,6 +111,6 @@ It is not intended to be used as a standalone assistant model.
 
 ## Publishing Note
 
-This file is kept in the repo as the draft model card for a future weight
-release. The current public surface is the Space demo and the GitHub source
-repository.
+The public adapter weights live in the Hugging Face model repo
+`AsadIsmail/prism-memory`. This file remains the repo-side source document for
+that model card and for future release updates.

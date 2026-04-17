@@ -21,7 +21,7 @@ It matches the root repo story:
 - one released checkpoint
 - one extraction behavior
 - one set of confirmed benchmark results
-- one compact explanation of the training data and held-out examples
+- one compact explanation of the synthetic training data and held-out examples
 
 Within the GitHub repo, this directory is a first-class public surface. The
 helper script `scripts/deploy_space.sh` bundles this folder with the release
@@ -46,7 +46,7 @@ subdirectories.
 1. The confirmed metrics for the released checkpoint
 2. Selected benchmark cases showing strengths and failure modes
 3. Side-by-side held-out extraction examples against the GPT-4.1 reference
-4. A compact description of the synthetic conversation data and SFT labels
+4. A compact description of the synthetic generated conversation data and SFT labels
 5. The single canonical memory extraction skill to keep
 
 ## Local Run
@@ -65,6 +65,7 @@ bash scripts/deploy_space.sh
 Useful bundled files:
 
 - `docs/release/extraction-skill.md`
+- `docs/release/memory-scenarios.md`
 - `docs/release/datasets.md`
 - `docs/release/extraction-examples.md`
 - `docs/release/release-results.md`

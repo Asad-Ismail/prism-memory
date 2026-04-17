@@ -8,6 +8,7 @@ benchmark evaluation.
 | Script | Purpose |
 |---|---|
 | [setup.sh](setup.sh) | install the repo and Space dependencies |
+| [deploy_model.sh](deploy_model.sh) | create a clean Hugging Face model bundle for the released LoRA adapter and optionally upload it |
 | [deploy_space.sh](deploy_space.sh) | create a clean Hugging Face Space bundle and optionally upload it |
 
 ## Release Helpers
@@ -38,3 +39,5 @@ The release-only helpers live under [release/README.md](release/README.md).
 - `MemEval` evaluation expects `MEMEVAL_ROOT` or a compatible local checkout.
 - The Space bundle script reads the release docs and JSON artifacts directly
   from this repo, so stale paths here usually break demo publishing.
+- The model bundle script reads the best checkpoint from `BETTER_MEMORY_ROOT`
+  unless `PRISM_CHECKPOINT_DIR` is set explicitly.

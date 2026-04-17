@@ -1,0 +1,270 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BETTER_MEMORY_ROOT="${BETTER_MEMORY_ROOT:-$ROOT_DIR/../better_memory}"
+CHECKPOINT_DIR="${PRISM_CHECKPOINT_DIR:-$BETTER_MEMORY_ROOT/exp15_sft_qwen7b_4ep}"
+BUNDLE_DIR="$ROOT_DIR/dist/model_bundle"
+MODEL_REPO="${1:-}"
+SPACE_REPO="${PRISM_SPACE_REPO:-AsadIsmail/prism-memory}"
+
+required_files=(
+  adapter_config.json
+  adapter_model.safetensors
+  chat_template.jinja
+  tokenizer.json
+  tokenizer_config.json
+  training_args.bin
+)
+
+for relpath in "${required_files[@]}"; do
+  if [[ ! -f "$CHECKPOINT_DIR/$relpath" ]]; then
+    echo "Missing required checkpoint file: $CHECKPOINT_DIR/$relpath" >&2
+    exit 1
+  fi
+done
+
+rm -rf "$BUNDLE_DIR"
+mkdir -p "$BUNDLE_DIR/docs/release" "$BUNDLE_DIR/results"
+
+cp "$CHECKPOINT_DIR/adapter_config.json" "$BUNDLE_DIR/adapter_config.json"
+cp "$CHECKPOINT_DIR/adapter_model.safetensors" "$BUNDLE_DIR/adapter_model.safetensors"
+cp "$CHECKPOINT_DIR/chat_template.jinja" "$BUNDLE_DIR/chat_template.jinja"
+cp "$CHECKPOINT_DIR/tokenizer.json" "$BUNDLE_DIR/tokenizer.json"
+cp "$CHECKPOINT_DIR/tokenizer_config.json" "$BUNDLE_DIR/tokenizer_config.json"
+cp "$CHECKPOINT_DIR/training_args.bin" "$BUNDLE_DIR/training_args.bin"
+cp "$ROOT_DIR/LICENSE" "$BUNDLE_DIR/LICENSE"
+cp "$ROOT_DIR/results/confirmed_exp15_summary.json" "$BUNDLE_DIR/results/confirmed_exp15_summary.json"
+cp "$ROOT_DIR/results/readme_extraction_examples.json" "$BUNDLE_DIR/results/readme_extraction_examples.json"
+cp "$ROOT_DIR/results/scenario_comparisons.json" "$BUNDLE_DIR/results/scenario_comparisons.json"
+
+python - "$ROOT_DIR" "$BUNDLE_DIR" "$SPACE_REPO" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+
+def strip_repo_nav(text: str) -> str:
+    lines = text.splitlines()
+    if lines and lines[0].startswith("[Back to Repo]"):
+        lines = lines[1:]
+        if lines and not lines[0].strip():
+            lines = lines[1:]
+    return "\n".join(lines).strip() + "\n"
+
+
+def quote_block(text: str) -> str:
+    return "\n".join(f"> {line}" for line in text.splitlines()) or ">"
+
+
+root_dir = Path(sys.argv[1])
+bundle_dir = Path(sys.argv[2])
+space_repo = sys.argv[3]
+
+doc_paths = [
+    "docs/release/datasets.md",
+    "docs/release/extraction-examples.md",
+    "docs/release/extraction-skill.md",
+    "docs/release/memory-scenarios.md",
+    "docs/release/release-results.md",
+    "docs/release/technical-blog.md",
+]
+
+for relpath in doc_paths:
+    src = root_dir / relpath
+    dst = bundle_dir / relpath
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text(strip_repo_nav(src.read_text()), encoding="utf-8")
+
+summary = json.loads((root_dir / "results/confirmed_exp15_summary.json").read_text())["results"][0]
+examples = json.loads((root_dir / "results/readme_extraction_examples.json").read_text())["examples"]
+
+locomo = summary["locomo"]["mean"]
+lme = summary["lme"]["mean"]
+qa_hits = summary["qa_cache"]["hits"]
+qa_misses = summary["qa_cache"]["misses"]
+
+example_sections = []
+for example in examples[:2]:
+    gpt_bullets = "\n".join(f"- {item}" for item in example["gpt41_reference"])
+    prism_bullets = "\n".join(f"- {item}" for item in example["prism_memory"])
+    example_sections.append(
+        "\n".join(
+            [
+                f"### {example['title']}",
+                f"- Session date: `{example['session_date']}`",
+                f"- Overlap score: `{example['overlap_score']:.3f}`",
+                f"- Note: {example['note']}",
+                "",
+                "**Turn**",
+                "",
+                quote_block(example["user_message"]),
+                "",
+                "**GPT-4.1 reference**",
+                "",
+                gpt_bullets,
+                "",
+                "**PRISM-Memory**",
+                "",
+                prism_bullets,
+            ]
+        )
+    )
+
+readme = f"""---
+base_model: Qwen/Qwen2.5-7B-Instruct
+base_model_relation: adapter
+license: apache-2.0
+library_name: peft
+pipeline_tag: text-generation
+tags:
+- conversational-memory
+- information-extraction
+- long-context
+- peft
+- lora
+- qwen2.5
+---
+
+# PRISM-Memory
+
+PRISM-Memory is a LoRA adapter that trains `Qwen/Qwen2.5-7B-Instruct` to write
+proposition-level memory from dialogue. It is the released `exp15_sft_qwen7b_4ep`
+checkpoint from the original `better_memory` project.
+
+## What this release shows
+
+- A 7B open model can replace GPT-4.1 for the extraction step in this memory pipeline.
+- On the confirmed release surface, PRISM-Memory scores `{lme:.4f}` on LongMemEval and `{locomo:.4f}` on LoCoMo.
+- The GPT-4.1-based PropMem reference scores `0.4650` on LongMemEval and `0.5360` on LoCoMo.
+
+This comparison holds the QA layer constant. It compares extractor against
+extractor, not a full end-to-end GPT-4.1 system.
+
+## Load the adapter
+
+```python
+from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+base_id = "Qwen/Qwen2.5-7B-Instruct"
+adapter_id = "AsadIsmail/prism-memory"
+
+tokenizer = AutoTokenizer.from_pretrained(adapter_id, trust_remote_code=True)
+base_model = AutoModelForCausalLM.from_pretrained(
+    base_id,
+    device_map="auto",
+    trust_remote_code=True,
+)
+model = PeftModel.from_pretrained(base_model, adapter_id)
+```
+
+This repo contains the adapter weights only. You still need the base model.
+
+## Training data
+
+PRISM-Memory was trained on **synthetic** multi-session memory conversations
+with **GPT-4.1-derived proposition labels**. The public release does not use
+real user chat logs.
+
+| File | Examples | Role |
+|---|---:|---|
+| `train.jsonl` | `2,329` conversations | raw synthetic conversation source |
+| `eval.jsonl` | `584` conversations | held-out synthetic conversation source |
+| `train_sft.jsonl` | `100,427` labels | primary SFT source |
+| `train_sft_clean_merged.jsonl` | `20,000` labels | cleaned follow-on base matching the best run |
+
+The released checkpoint uses a `20k` sample from `train_sft.jsonl`. See
+[docs/release/datasets.md](docs/release/datasets.md) for the full inventory,
+the evaluation surfaces, and the ablations that regressed.
+
+### Example data item
+
+**Synthetic turn**
+
+> yeah, I think starting with incremental scans and parallel matrix jobs makes sense. We have 20 concurrent jobs max on GitHub Actions currently. Also want to keep Slack notifications from Snyk consistent with other pipeline alerts, aggregated and concise.
+
+**Target propositions**
+
+- GitHub Actions concurrency limit: 20 concurrent jobs
+- Wants Snyk Slack notifications aggregated and concise, consistent with other pipeline alerts
+
+The current release makes the data recipe and examples public. The full raw
+training JSONLs are not bundled in this model repo.
+
+## Confirmed results
+
+| Benchmark | PRISM-Memory | GPT-4.1-based PropMem reference |
+|---|---:|---:|
+| LongMemEval | `{lme:.4f}` | `0.4650` |
+| LoCoMo | `{locomo:.4f}` | `0.5360` |
+
+The reproduced evaluation hit the cached QA surface exactly: `{qa_hits}` hits,
+`{qa_misses}` misses.
+
+## Extraction examples
+
+{"\n\n".join(example_sections)}
+
+More held-out examples live in
+[docs/release/extraction-examples.md](docs/release/extraction-examples.md).
+
+## Bundled docs and artifacts
+
+- [docs/release/datasets.md](docs/release/datasets.md)
+- [docs/release/extraction-examples.md](docs/release/extraction-examples.md)
+- [docs/release/extraction-skill.md](docs/release/extraction-skill.md)
+- [docs/release/memory-scenarios.md](docs/release/memory-scenarios.md)
+- [docs/release/release-results.md](docs/release/release-results.md)
+- [docs/release/technical-blog.md](docs/release/technical-blog.md)
+- [results/confirmed_exp15_summary.json](results/confirmed_exp15_summary.json)
+- [results/readme_extraction_examples.json](results/readme_extraction_examples.json)
+- [results/scenario_comparisons.json](results/scenario_comparisons.json)
+
+## Demo
+
+The companion Space is live at
+`https://huggingface.co/spaces/{space_repo}`.
+
+## Limitations
+
+- This is a memory-writing component, not a general chat model.
+- It is a LoRA adapter, not a standalone full checkpoint.
+- The evaluation pipeline still uses a separate QA model to score retrieved memory.
+- Temporal and inferential categories still trail stronger larger-model baselines.
+"""
+
+(bundle_dir / "README.md").write_text(readme, encoding="utf-8")
+PY
+
+echo "Prepared model bundle at: $BUNDLE_DIR"
+
+if [[ -z "$MODEL_REPO" ]]; then
+  exit 0
+fi
+
+python - "$MODEL_REPO" "$BUNDLE_DIR" <<'PY'
+import sys
+from pathlib import Path
+
+try:
+    from huggingface_hub import HfApi, upload_folder
+except ImportError as exc:
+    raise SystemExit(
+        "huggingface_hub is required to upload the model. "
+        "Install it with: python -m pip install huggingface_hub"
+    ) from exc
+
+repo_id = sys.argv[1]
+bundle_dir = Path(sys.argv[2])
+
+api = HfApi()
+api.create_repo(repo_id=repo_id, repo_type="model", exist_ok=True)
+upload_folder(
+    repo_id=repo_id,
+    repo_type="model",
+    folder_path=str(bundle_dir),
+    commit_message="Publish PRISM-Memory adapter bundle",
+)
+print(f"Uploaded bundle to https://huggingface.co/{repo_id}")
+PY
