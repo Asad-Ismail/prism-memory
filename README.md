@@ -81,6 +81,7 @@ in `RELEASE_RESULTS.md` and `results/confirmed_exp15_summary.json`.
 - release artifacts for benchmark confirmation and case studies
 - a self-contained Gradio Space demo
 - a research harness for synthetic, procedural, and agent-memory benchmarks
+- adapters for TravelPlanner, ALFWorld, MemoryArena, and MemEval surfaces
 
 ## Repository Layout
 
@@ -197,6 +198,12 @@ Run the full public MemoryArena suite:
 python scripts/run_memoryarena_suite.py --output logs/runs/memoryarena_suite_v2.json
 ```
 
+Run the MemEval adapter on a small benchmark slice:
+
+```bash
+python scripts/run_memeval_eval.py --benchmark locomo --num-samples 1 --skip-judge
+```
+
 Run the promoted OpenAI-backed synthetic memory benchmark:
 
 ```bash
@@ -259,7 +266,7 @@ It includes:
 - procedural memory induction
 - consolidation passes
 - a search loop for candidate mutation and promotion
-- adapters for synthetic, TravelPlanner, ALFWorld, and MemoryArena surfaces
+- adapters for synthetic, TravelPlanner, ALFWorld, MemoryArena, and MemEval surfaces
 
 Current promoted benchmark policies:
 
