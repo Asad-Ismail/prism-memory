@@ -24,9 +24,14 @@ ROOT = _resolve_root()
 RESULTS_DIR = ROOT / "results"
 SUMMARY_PATH = RESULTS_DIR / "confirmed_exp15_summary.json"
 SCENARIO_PATH = RESULTS_DIR / "scenario_comparisons.json"
+README_EXAMPLE_PATH = RESULTS_DIR / "readme_extraction_examples.json"
 SKILL_CANDIDATES = [
     ROOT / "docs" / "release" / "extraction-skill.md",
     ROOT / "MEMORY_EXTRACTION_SKILL.md",
+]
+DATASET_CANDIDATES = [
+    ROOT / "docs" / "release" / "datasets.md",
+    ROOT / "DATASETS.md",
 ]
 LOCOMO_CATEGORY_NAMES = {
     "1": "factual",
@@ -51,6 +56,22 @@ def _load_json(path: Path, default):
     return json.loads(path.read_text())
 
 
+def _clean_markdown(text: str) -> str:
+    lines = text.splitlines()
+    if lines and lines[0].startswith("[Back to Repo]"):
+        lines = lines[1:]
+        while lines and not lines[0].strip():
+            lines = lines[1:]
+    return "\n".join(lines).strip()
+
+
+def _load_markdown(candidates: list[Path], fallback: str) -> str:
+    for path in candidates:
+        if path.exists():
+            return _clean_markdown(path.read_text())
+    return fallback
+
+
 def _load_summary() -> dict:
     return _load_json(SUMMARY_PATH, {"results": [], "failures": []})
 
@@ -59,11 +80,16 @@ def _load_scenarios() -> dict:
     return _load_json(SCENARIO_PATH, {"scenarios": []})
 
 
+def _load_readme_examples() -> dict:
+    return _load_json(README_EXAMPLE_PATH, {"examples": []})
+
+
 def _load_skill() -> str:
-    for path in SKILL_CANDIDATES:
-        if path.exists():
-            return path.read_text()
-    return "Skill document not found."
+    return _load_markdown(SKILL_CANDIDATES, "Skill document not found.")
+
+
+def _load_datasets() -> str:
+    return _load_markdown(DATASET_CANDIDATES, "Dataset summary not found.")
 
 
 def _best_result() -> dict | None:
@@ -76,13 +102,23 @@ def release_markdown() -> str:
     if not item:
         return "## No confirmed release result yet"
     checkpoint = Path(item["checkpoint"]).name
-    return "\n\n".join(
+    locomo = item["locomo"]["mean"]
+    lme = item["lme"]["mean"]
+    return "\n".join(
         [
             "# PRISM-Memory",
+            "",
             "**Turn conversations into durable, searchable memory.**",
+            "",
             f"Released checkpoint: `{checkpoint}`",
-            f"Confirmed LoCoMo: `{item['locomo']['mean']:.3f}`",
-            f"Confirmed LongMemEval: `{item['lme']['mean']:.3f}`",
+            "Base model: `Qwen/Qwen2.5-7B-Instruct`",
+            "",
+            "| Benchmark | PRISM-Memory `sft4` | GPT-4.1-based PropMem reference |",
+            "|---|---:|---:|",
+            f"| LongMemEval | `{lme:.3f}` | `0.465` |",
+            f"| LoCoMo | `{locomo:.3f}` | `0.536` |",
+            "",
+            "This Space shows the public release only: confirmed metrics, held-out benchmark cases, side-by-side extraction examples, the training-data summary, and the canonical extraction skill.",
         ]
     )
 
@@ -165,6 +201,43 @@ def render_scenario(choice: str):
     return "\n".join(header), table
 
 
+def _readme_example_label(item: dict) -> str:
+    return item["title"]
+
+
+def readme_example_choices() -> list[str]:
+    examples = _load_readme_examples().get("examples", [])
+    return [_readme_example_label(example) for example in examples]
+
+
+def render_readme_example(choice: str) -> str:
+    examples = _load_readme_examples().get("examples", [])
+    if not examples:
+        return "No extraction examples available yet."
+
+    item = next(
+        (example for example in examples if _readme_example_label(example) == choice or example["id"] == choice),
+        examples[0],
+    )
+    body = [
+        f"### {item['title']}",
+        "",
+        f"**Session date:** `{item['session_date']}`",
+        f"**Overlap score:** `{item['overlap_score']:.3f}`",
+        f"**What this example shows:** {item['note']}",
+        "",
+        "**Turn**",
+        "",
+        f"> {item['user_message']}",
+        "",
+        "**GPT-4.1 reference**",
+    ]
+    body.extend([f"- {entry}" for entry in item.get("gpt41_reference", [])])
+    body.extend(["", "**PRISM-Memory `sft4`**"])
+    body.extend([f"- {entry}" for entry in item.get("prism_memory", [])])
+    return "\n".join(body)
+
+
 with gr.Blocks(title="PRISM-Memory Demo") as demo:
     gr.Markdown(release_markdown())
 
@@ -183,6 +256,16 @@ with gr.Blocks(title="PRISM-Memory Demo") as demo:
         scenario_table = gr.Dataframe(interactive=False, wrap=True)
         picker.change(render_scenario, inputs=picker, outputs=[scenario_md, scenario_table])
         demo.load(fn=lambda: render_scenario(choices[0]), outputs=[scenario_md, scenario_table])
+
+    with gr.Tab("Extraction Examples"):
+        example_choices = readme_example_choices() or ["pending"]
+        example_picker = gr.Dropdown(choices=example_choices, value=example_choices[0], label="Held-Out Example")
+        example_md = gr.Markdown()
+        example_picker.change(render_readme_example, inputs=example_picker, outputs=example_md)
+        demo.load(fn=lambda: render_readme_example(example_choices[0]), outputs=example_md)
+
+    with gr.Tab("Data"):
+        gr.Markdown(_load_datasets())
 
     with gr.Tab("Skill"):
         gr.Markdown(_load_skill())
