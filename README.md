@@ -13,7 +13,7 @@
 
 <p align="center"><strong>Turn conversations into durable, searchable memory.</strong></p>
 
-<p align="center"><em>A 7B open extractor trained to replace GPT-4.1-style proposition extraction, with one benchmarked release checkpoint, a live Space demo, and a broader hybrid-memory research harness.</em></p>
+<p align="center"><em>Train a 7B open model to turn dialogue into proposition-level memory, then measure it against the GPT-4.1 extraction baseline it is trying to replace.</em></p>
 
 <p align="center">
   <a href="https://huggingface.co/spaces/AsadIsmail/prism-memory">Live Space</a> ·
@@ -24,20 +24,23 @@
 
 ![PRISM-Memory architecture](assets/prism-memory-architecture.svg)
 
-## Why This Repo Is Interesting
+## What This Shows
 
-The main hook is not that a 7B model beats GPT-4.1 everywhere. It does not.
-The real result is narrower and more useful: `PRISM-Memory` replaces GPT-4.1
-for the **memory extraction step**, beats the GPT-4.1-based PropMem reference
-on LongMemEval, and stays competitive on LoCoMo.
+`PRISM-Memory` fine-tunes `Qwen/Qwen2.5-7B-Instruct` for the proposition
+extraction step that PropMem normally gets from GPT-4.1.
 
 | Benchmark | PRISM-Memory `sft4` | GPT-4.1-based PropMem reference | Read |
 |---|---:|---:|---|
 | LongMemEval | `0.4768` | `0.4650` | PRISM wins |
-| LoCoMo | `0.4981` | `0.5360` | PRISM is competitive, but still behind |
+| LoCoMo | `0.4981` | `0.5360` | PRISM trails, but stays close |
 
-This comparison is extractor-vs-extractor on the same GPT-4.1 QA surface, not
-an end-to-end claim that a 7B model replaces GPT-4.1 everywhere.
+That is the actual result: a 7B open model can handle the extraction layer
+well enough to beat the GPT-4.1 baseline on LongMemEval and stay within reach
+on LoCoMo.
+
+The comparison holds the QA layer constant. This repo is comparing
+extractor-against-extractor, not claiming that a 7B model replaces GPT-4.1
+end-to-end.
 
 More detail lives in
 [docs/release/release-results.md](docs/release/release-results.md) and

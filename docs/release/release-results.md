@@ -17,18 +17,16 @@ artifacts that informed the public checkpoint choice.
 
 ## Baseline Context
 
-The public hook for this release is narrower than "7B beats GPT-4.1."
-
-`PRISM-Memory` replaces GPT-4.1 for the extraction step, then evaluates both
-systems on the same QA surface. On that comparison:
+`PRISM-Memory` fine-tunes `Qwen/Qwen2.5-7B-Instruct` for the proposition
+extraction step that PropMem normally gets from GPT-4.1. On the confirmed run:
 
 | Benchmark | PRISM-Memory `sft4` | GPT-4.1-based PropMem reference | Read |
 |---|---:|---:|---|
 | LongMemEval | `0.4768` | `0.4650` | PRISM wins |
-| LoCoMo | `0.4981` | `0.5360` | PRISM is competitive, but still behind |
+| LoCoMo | `0.4981` | `0.5360` | PRISM trails, but stays close |
 
-This is an extractor-vs-extractor comparison, not a claim that a 7B open model
-replaces GPT-4.1 end-to-end.
+The QA layer is held constant. This is an extractor-vs-extractor comparison,
+not an end-to-end GPT-4.1 replacement claim.
 
 ## LoCoMo Breakdown
 
