@@ -7,6 +7,7 @@ These are the documents that define the public `PRISM-Memory` release.
 | File | Why it matters |
 |---|---|
 | [extraction-skill.md](extraction-skill.md) | the canonical extraction contract and the best checkpoint to pair with it |
+| [extraction-examples.md](extraction-examples.md) | selected held-out GPT-4.1-vs-PRISM comparisons used on the main README |
 | [release-results.md](release-results.md) | the confirmed metrics and the comparison logic behind the checkpoint choice |
 | [datasets.md](datasets.md) | what data the release actually used and what did not help |
 | [technical-blog.md](technical-blog.md) | the longer explanation of what worked, what regressed, and why |

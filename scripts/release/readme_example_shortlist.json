@@ -1,0 +1,20 @@
+[
+  {
+    "id": "infra_queue_delays",
+    "title": "Infrastructure bottlenecks stay structured",
+    "match_substring": "no real caching beyond basic Docker layer caching",
+    "note": "Near-exact match on two operational facts from a single held-out turn."
+  },
+  {
+    "id": "github_actions_notifications",
+    "title": "Numeric constraints and preferences survive extraction",
+    "match_substring": "20 concurrent jobs max on github actions currently",
+    "note": "The trained model keeps both the hard concurrency cap and the desired notification style."
+  },
+  {
+    "id": "sidecar_limits_and_rollout",
+    "title": "Current state and next-step plans stay grouped",
+    "match_substring": "set cpu limits for all sidecars and monitor with prometheus now",
+    "note": "The extracted memory keeps the current configuration, the planned security step, and the rollout strategy in one compact bundle."
+  }
+]

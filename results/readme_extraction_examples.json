@@ -1,0 +1,57 @@
+{
+  "source_dataset": "BETTER_MEMORY_ROOT/data/output/eval_sft.jsonl",
+  "model_path": "BETTER_MEMORY_ROOT/exp15_sft_qwen7b_4ep",
+  "output_examples": 3,
+  "examples": [
+    {
+      "id": "infra_queue_delays",
+      "title": "Infrastructure bottlenecks stay structured",
+      "note": "Near-exact match on two operational facts from a single held-out turn.",
+      "session_date": "2025-01-04 15:34:00",
+      "user_message": "yeah, no real caching beyond basic Docker layer caching. Jenkins nodes have limited capacity, and we sometimes hit queue delays during peak commits.",
+      "gpt41_reference": [
+        "No caching beyond basic Docker layer caching",
+        "Jenkins nodes have limited capacity and experience queue delays during peak commits"
+      ],
+      "prism_memory": [
+        "No Docker caching beyond basic layer caching",
+        "Jenkins nodes have limited capacity; peak commits cause queue delays"
+      ],
+      "overlap_score": 0.9090909090909092
+    },
+    {
+      "id": "github_actions_notifications",
+      "title": "Numeric constraints and preferences survive extraction",
+      "note": "The trained model keeps both the hard concurrency cap and the desired notification style.",
+      "session_date": "2025-03-01 15:07:00",
+      "user_message": "yeah, I think starting with incremental scans and parallel matrix jobs makes sense. We have 20 concurrent jobs max on GitHub Actions currently. Also want to keep Slack notifications from Snyk consistent with other pipeline alerts\u2014aggregated and concise. Can you help draft the workflow?",
+      "gpt41_reference": [
+        "GitHub Actions concurrency limit: 20 concurrent jobs",
+        "Wants Snyk Slack notifications aggregated and concise, consistent with other pipeline alerts"
+      ],
+      "prism_memory": [
+        "GitHub Actions concurrency limit: 20 concurrent jobs",
+        "Snyk Slack notifications should be aggregated and concise"
+      ],
+      "overlap_score": 0.8000000000000002
+    },
+    {
+      "id": "sidecar_limits_and_rollout",
+      "title": "Current state and next-step plans stay grouped",
+      "note": "The extracted memory keeps the current configuration, the planned security step, and the rollout strategy in one compact bundle.",
+      "session_date": "2025-09-09 15:26:00",
+      "user_message": "yeah good point about resource overhead, we set CPU limits for all sidecars and monitor with Prometheus now. no mTLS yet, but it\u2019s on the roadmap for phase two. as for routing, we want to start with canary deployments and traffic splitting, maybe some basic fault injection for testing.",
+      "gpt41_reference": [
+        "Istio sidecar CPU limits set and monitored via Prometheus",
+        "mTLS planned in phase two",
+        "Plan to use canary deployments, traffic splitting, and basic fault injection"
+      ],
+      "prism_memory": [
+        "Sidecar CPU limits set and monitored via Prometheus",
+        "Istio mTLS planned for phase two",
+        "Routing strategy: canary deployments and traffic splitting; basic fault injection planned"
+      ],
+      "overlap_score": 0.7985739750445632
+    }
+  ]
+}

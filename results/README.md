@@ -8,6 +8,7 @@ release story.
 | File | Purpose |
 |---|---|
 | `confirmed_exp15_summary.json` | confirmed release summary for `exp15_sft_qwen7b_4ep` |
+| `readme_extraction_examples.json` | selected held-out GPT-4.1-vs-PRISM extraction comparisons used by the main README |
 | `scenario_comparisons.json` | curated benchmark cases used by the demo |
 | `sft4.json` | single-checkpoint confirmation payload |
 | `frontier_memory_benchmarks.json` | tracked summary of promoted external-benchmark results |
