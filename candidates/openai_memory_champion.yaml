@@ -1,0 +1,125 @@
+candidate_id: bootstrap_v0_iter_20260416231328_02_gpt-5.2_medium
+memory:
+  episodic:
+    enabled: true
+    provenance_required: true
+    source_of_truth: append_only_event_log
+    storage: trace_graph
+    granularity: step
+  semantic:
+    enabled: true
+    representation: proposition_graph
+    canonicalization:
+      enabled: true
+      merge_similarity: 0.92
+      temporal_update_policy: newest_with_provenance
+  procedural:
+    enabled: true
+    unit_type: hierarchical_playbook
+    build:
+      mode: hybrid
+      use_successes: true
+      use_failures: true
+    reliability:
+      model: beta_posterior
+      prior_alpha: 1.0
+      prior_beta: 1.0
+    abstraction_levels:
+    - step
+    - routine
+    - playbook
+  tool_memory:
+    enabled: true
+    representation: capability_and_failure_notes
+consolidation:
+  cadence: nightly
+  passes:
+  - extract_negative_constraints
+  - mark_critical_vs_noise
+  - split_overbroad_routines
+  - compose_playbooks
+  - deprecate_stale
+  - compact_summaries
+  thresholds:
+    merge_similarity: 0.9
+    min_evidence_for_refinement: 3
+    stale_days: 30
+    prune_confidence_below: 0.15
+  keep_raw_trace_forever: true
+  budget:
+    max_traces_per_cycle: 500
+    max_llm_calls: 100
+retrieval:
+  router: hybrid
+  order:
+  - episodic
+  - semantic
+  - procedural
+  planning_mode: direct_then_decompose
+  top_k:
+    procedural: 5
+    semantic: 8
+    episodic: 5
+  rerank:
+    enabled: true
+    method: cross_encoder_or_llm
+controller:
+  architecture: single_agent
+  use_policy: inject_minimal_supporting_context
+  update_policy: validate_then_replace
+  write_gates:
+    require_trace_link: true
+    require_environment_feedback: true
+    allow_unverified_summaries: false
+  orchestrator_memory: false
+  worker_memory: false
+llm:
+  enabled: true
+  provider: openai
+  mode: judge_and_correct
+  routing_policy: conflict_only
+  fallback_to_heuristic: true
+  model: gpt-5.2
+  reasoning_effort: medium
+  max_output_tokens: 96
+  verbosity: low
+  context:
+    semantic_top_k: 8
+    procedural_top_k: 3
+    episodic_top_k: 5
+    include_heuristic_answer: true
+mutation_surface:
+  allowed:
+  - consolidation.passes
+  - consolidation.thresholds
+  - retrieval.router
+  - retrieval.top_k
+  - controller.architecture
+  - controller.write_gates
+  - controller.use_policy
+  - memory.procedural.reliability
+  forbidden:
+  - benchmark_labels
+  - benchmark_gold_data
+  - historical_logs
+  - scoring_weights
+parent_ids:
+- bootstrap_v0_iter_20260416231328_02
+status: promoted
+owner: autoresearch
+track: hybrid_semantic_procedural
+hypothesis: selective openai-backed correction on ambiguity-heavy memory questions improves the local synthetic memory frontier without regressing direct recall
+pivot_reason: live provider benchmark promotion
+benchmarks:
+  tier0:
+  - synthetic_openai_live
+  tier1:
+  - synthetic_suite
+  tier2:
+  - travelplanner
+  - alfworld
+  - memoryarena
+budgets:
+  rollout_minutes: 15
+  max_live_runs: 20
+  max_token_cost_usd: 25

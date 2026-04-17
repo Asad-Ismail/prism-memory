@@ -1,0 +1,16 @@
+policy_id: travelplanner_bootstrap_v0
+city_pool_size: 8
+city_cost_weight: 1.0
+city_transport_weight: 0.7
+city_restaurant_weight: 0.15
+city_attraction_weight: 0.1
+city_cuisine_weight: 0.8
+restaurant_rating_weight: 2.0
+required_cuisine_bonus: 40.0
+nonrequired_meal_penalty: 0.0
+dinner_on_travel_days: true
+breakfast_on_final_day: false
+top_k_sequences: 32
+prefer_flight_multiplier: 1.0
+transport_mode: auto
+travel_dinner_policy: adaptive

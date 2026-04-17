@@ -1,0 +1,55 @@
+{
+  "source": "LoCoMo held-out cases for PRISM-Memory release",
+  "scenarios": [
+    {
+      "id": "temporal_anchor_hobby",
+      "title": "Temporal Anchor",
+      "source_id": "conv-49",
+      "category": 2,
+      "question": "Which hobby did Sam take up in May 2023?",
+      "gold_answer": "painting",
+      "kind": "strength",
+      "note": "The released model keeps the dated hobby proposition and answers correctly."
+    },
+    {
+      "id": "adversarial_refusal_guitar",
+      "title": "Adversarial Refusal",
+      "source_id": "conv-50",
+      "category": 5,
+      "question": "Why did Dave get his guitar customized with a shiny finish?",
+      "gold_answer": "",
+      "kind": "strength",
+      "note": "This tests whether the system refuses to invent an answer when the premise is unsupported."
+    },
+    {
+      "id": "diagnosis_specificity",
+      "title": "Diagnosis Specificity",
+      "source_id": "conv-49",
+      "category": 1,
+      "question": "Which ailment does Sam have to face due to his weight?",
+      "gold_answer": "gastritis",
+      "kind": "failure",
+      "note": "A representative factual miss: the model retrieves the health-risk frame but not the specific diagnosis."
+    },
+    {
+      "id": "location_inference",
+      "title": "Location Inference",
+      "source_id": "conv-49",
+      "category": 3,
+      "question": "Does Evan live close to a beach or mountains?",
+      "gold_answer": "beach",
+      "kind": "failure",
+      "note": "A representative inferential miss: retrieval includes both clues, but the model overcommits to the mountain mention."
+    },
+    {
+      "id": "reading_detail",
+      "title": "Reading Detail",
+      "source_id": "conv-49",
+      "category": 4,
+      "question": "What novel is Evan reading that he finds gripping?",
+      "gold_answer": "The Great Gatsby",
+      "kind": "failure",
+      "note": "A representative multi-hop miss: the model retains the coarse book description but misses the specific title."
+    }
+  ]
+}

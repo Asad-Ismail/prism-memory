@@ -1,0 +1,10 @@
+policy_id: alfworld_retrieval_t64_e20
+train_games: 64
+eval_games: 20
+max_steps: 50
+exact_match_bonus: 2.0
+prev_action_bonus: 0.5
+goal_weight: 1.0
+observation_weight: 2.0
+template_bonus: 0.75
+novelty_penalty: 0.15

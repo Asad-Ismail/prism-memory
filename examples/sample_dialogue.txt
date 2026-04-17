@@ -1,0 +1,6 @@
+User: I started watercolor painting in May 2023 after work started getting too stressful.
+Assistant: That sounds like a good outlet. Are you still taking guitar lessons too?
+User: No, I stopped guitar lessons in August 2023 because I wanted to focus on painting instead.
+Assistant: Good tradeoff if painting is sticking.
+User: It is. I also moved to Santa Cruz in January 2024, so now I paint near the beach most weekends.
+Assistant: Nice. That sounds like a much better setup for staying consistent.

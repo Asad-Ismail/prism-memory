@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: PRISM-Memory
+message: If you use this repository, please cite the software and link the technical blog.
+type: software
+authors:
+  - family-names: Ismail
+    given-names: Asad
+repository-code: https://github.com/Asad-Ismail/prism-memory
+license: Apache-2.0
+abstract: >
+  PRISM-Memory is a proposition-level conversational memory system and
+  hybrid memory research harness built around durable, inspectable memory
+  extraction and retrieval.
+keywords:
+  - conversational memory
+  - information extraction
+  - long-term memory
+  - retrieval
+  - benchmark
+

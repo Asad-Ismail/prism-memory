@@ -1,0 +1,140 @@
+{
+  "qa_cache": {
+    "model": "gpt-4.1",
+    "cache_size": 16969,
+    "hits": 5,
+    "misses": 0,
+    "missing_examples": []
+  },
+  "scenarios": [
+    {
+      "id": "temporal_anchor_hobby",
+      "title": "Temporal Anchor",
+      "source_id": "conv-49",
+      "category": 2,
+      "question": "Which hobby did Sam take up in May 2023?",
+      "gold_answer": "painting",
+      "kind": "strength",
+      "note": "The released model keeps the dated hobby proposition and answers correctly.",
+      "systems": [
+        {
+          "name": "sft4",
+          "prediction": "painting",
+          "top_retrieval": [
+            "Sam: [18 May 2023] Sam is considering trying painting as a new hobby.",
+            "Sam: [24 May 2023] Sam has been considering trying painting as a new hobby.",
+            "Sam: [6 October 2023] Sam asked Evan if he has explored any fun indoor activities or hobbies.",
+            "Sam: [18 May 2023] Sam is excited to try new things.",
+            "Sam: [24 May 2023] Sam is trying to break old habits.",
+            "Sam: [15 August 2023] Sam attended a cooking class.",
+            "Sam: [17 December 2023] Sam used to love hiking.",
+            "[1:47 pm on 18 May, 2023] Sam: We hiked a good distance - quite a feat for me back then. It's definitely a great memory."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "adversarial_refusal_guitar",
+      "title": "Adversarial Refusal",
+      "source_id": "conv-50",
+      "category": 5,
+      "question": "Why did Dave get his guitar customized with a shiny finish?",
+      "gold_answer": "",
+      "kind": "strength",
+      "note": "This tests whether the system refuses to invent an answer when the premise is unsupported.",
+      "systems": [
+        {
+          "name": "sft4",
+          "prediction": "None",
+          "top_retrieval": [
+            "[2:55 pm on 31 August, 2023] Dave: That guitar has a gorgeous purple hue. Why did you make it so shiny?",
+            "Dave: [2 November 2023] The guitar was in bad condition when Dave found it.",
+            "[2:55 pm on 31 August, 2023] Dave: Good pick! The customized purple glow gives it a unique look that really stands out.",
+            "[2:55 pm on 31 August, 2023] Dave: That's a great guitar, Calvin! Love the design, it's so unique and special.",
+            "Dave: [16 May 2023] Calvin lost his guitar and amp but managed to save his music gear and microphone."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "diagnosis_specificity",
+      "title": "Diagnosis Specificity",
+      "source_id": "conv-49",
+      "category": 1,
+      "question": "Which ailment does Sam have to face due to his weight?",
+      "gold_answer": "gastritis",
+      "kind": "failure",
+      "note": "A representative factual miss: the model retrieves the health-risk frame but not the specific diagnosis.",
+      "systems": [
+        {
+          "name": "sft4",
+          "prediction": "serious health risk",
+          "top_retrieval": [
+            "Sam: [8 October 2023] The doctor told Sam that his weight is a serious health risk.",
+            "Sam: [24 May 2023] The doctor's check-up revealed that Sam's weight was not good.",
+            "Sam: [13 August 2023] Sam is currently experiencing challenges affecting his health.",
+            "[6:48 pm on 17 December, 2023] Sam: Yeah, I'm struggling with my weight and it's affecting my confidence. I feel like I can't overcome all the challenges with my weight, I keep lacking motivation.",
+            "Sam: [21 November 2023] Sam has been trying to make dietary changes to address his discomfort.",
+            "Sam: [9 November 2023] Sam is a Weight Watchers coach in his group.",
+            "Sam: [7 August 2023] Sam has been prioritizing his health for some time.",
+            "Sam: [15 August 2023] Sam is concerned about his health."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "location_inference",
+      "title": "Location Inference",
+      "source_id": "conv-49",
+      "category": 3,
+      "question": "Does Evan live close to a beach or mountains?",
+      "gold_answer": "beach",
+      "kind": "failure",
+      "note": "A representative inferential miss: retrieval includes both clues, but the model overcommits to the mountain mention.",
+      "systems": [
+        {
+          "name": "sft4",
+          "prediction": "mountains",
+          "top_retrieval": [
+            "Evan: [27 August 2023] Evan also shared his recent road trip to the Rocky Mountains and love for hiking.",
+            "Evan: [27 August 2023] Evan lives within a two-hour drive of a place with incredible views and a peaceful atmosphere.",
+            "Evan: [9 November 2023] They also discussed enjoying a sunset together at Evan's favorite spot by the beach, planning to visit it soon to de-stress.",
+            "Evan: [10 January 2024] Evan enjoys going on beach sunsets as a low-impact exercise.",
+            "[7:11 pm on 24 May, 2023] Evan: Hey Sam, thanks for asking! It was great - fresh air, peacefulness and a cozy cabin surrounded by mountains and forests made it feel like a real retreat.",
+            "Evan: [31 December 2023] Sam shared about a recent hiking trip, while Evan mentioned a mountain drive that ended in a minor accident.",
+            "Evan: [27 August 2023] Evan recommended a nearby lake for hiking and nature exploration.",
+            "Evan: [27 August 2023] Evan enjoys road trips and exploring nature."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading_detail",
+      "title": "Reading Detail",
+      "source_id": "conv-49",
+      "category": 4,
+      "question": "What novel is Evan reading that he finds gripping?",
+      "gold_answer": "The Great Gatsby",
+      "kind": "failure",
+      "note": "A representative multi-hop miss: the model retains the coarse book description but misses the specific title.",
+      "systems": [
+        {
+          "name": "sft4",
+          "prediction": "a new mystery novel",
+          "top_retrieval": [
+            "Evan: [27 August 2023] Evan is reading a book that he finds increasingly compelling.",
+            "Evan: [27 July 2023] Evan is currently reading a new mystery novel.",
+            "Evan: [27 July 2023] Evan is reading 'The Great Gatsby'.",
+            "Evan: [26 December 2023] Evan finds that art helps him recognize and handle his own feelings.",
+            "Evan: [27 August 2023] Evan expressed interest in a book and discussed potential physical therapy for his knee.",
+            "Evan: [10 January 2024] Evan concluded that he needs to be more careful next time.",
+            "Evan: [6 October 2023] Evan thinks writing is a great way to express oneself.",
+            "Evan: [13 August 2023] Evan suggested checking out a dream interpretation book to help interpret Sam's dream.",
+            "Evan: [6 October 2023] Evan believes that writing can be super therapeutic.",
+            "Evan: [6 October 2023] Evan usually paints what is on his mind or something he is feeling."
+          ]
+        }
+      ]
+    }
+  ]
+}

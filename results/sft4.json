@@ -1,0 +1,48 @@
+{
+  "alias": "sft4",
+  "checkpoint": "exp15_sft_qwen7b_4ep",
+  "elapsed_min": 28.93,
+  "args": {
+    "n_lme": 10,
+    "context_window": 0,
+    "locomo_temporal_k": 8,
+    "locomo_adversarial_k": 5,
+    "lme_multisess_k": 20,
+    "use_temporal_prompt": false,
+    "strict_cache": true
+  },
+  "qa_cache": {
+    "model": "gpt-4.1",
+    "cache_size": 16969,
+    "hits": 460,
+    "misses": 0,
+    "missing_examples": []
+  },
+  "locomo": {
+    "categories": {
+      "1": 0.3339551926061944,
+      "2": 0.4978785869736096,
+      "3": 0.26059974747474746,
+      "4": 0.514447774438597,
+      "5": 0.8837209302325582
+    },
+    "mean": 0.49812044634514124
+  },
+  "lme": {
+    "categories": {
+      "knowledge-update": 0.558840579710145,
+      "multi-session": 0.13909774436090225,
+      "single-session-assistant": 0.765639589169001,
+      "single-session-preference": 0.05196674560130369,
+      "single-session-user": 0.9133333333333333,
+      "temporal-reasoning": 0.43166666666666664
+    },
+    "mean": 0.47675744314022533
+  },
+  "logged_comparison": {
+    "logged_locomo_mean": 0.498,
+    "logged_lme_mean": 0.477,
+    "locomo_delta": 0.00012044634514124519,
+    "lme_delta": -0.00024255685977464525
+  }
+}

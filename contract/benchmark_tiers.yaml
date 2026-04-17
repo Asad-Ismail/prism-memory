@@ -1,0 +1,88 @@
+tiers:
+  tier0:
+    goal: cheap falsification
+    required: true
+    benchmarks:
+      - id: alfworld_proxy
+        family: procedural_replay
+        primary_skill: procedural_retrieval
+        budget_class: cheap
+        promotion_weight: 0.35
+      - id: travelplanner_proxy
+        family: planning_replay
+        primary_skill: hierarchical_planning_memory
+        budget_class: cheap
+        promotion_weight: 0.35
+      - id: compiler_unit
+        family: consolidation
+        primary_skill: merge_split_prune_safety
+        budget_class: cheap
+        promotion_weight: 0.30
+
+  tier1:
+    goal: core procedural validation
+    required: true
+    benchmarks:
+      - id: alfworld_seen_shard
+        family: embodied_procedural
+        primary_skill: routine_execution
+        budget_class: medium
+        promotion_weight: 0.25
+      - id: alfworld_unseen_shard
+        family: embodied_procedural
+        primary_skill: compositional_generalization
+        budget_class: medium
+        promotion_weight: 0.40
+      - id: travelplanner_dev_shard
+        family: real_world_planning
+        primary_skill: long_horizon_constraint_tracking
+        budget_class: medium
+        promotion_weight: 0.35
+
+  tier2:
+    goal: generalization beyond narrow task families
+    required: true
+    benchmarks:
+      - id: mem2actbench
+        family: agentic_memory_use
+        primary_skill: memory_for_tool_arguments
+        budget_class: expensive
+        promotion_weight: 0.22
+      - id: memoryarena
+        family: multi_session_agentic
+        primary_skill: memory_guided_future_actions
+        budget_class: expensive
+        promotion_weight: 0.22
+      - id: memoryagentbench
+        family: broad_memory_competencies
+        primary_skill: retrieval_update_conflict_resolution
+        budget_class: expensive
+        promotion_weight: 0.18
+      - id: proced_mem
+        family: procedural_retrieval
+        primary_skill: procedure_matching_under_shift
+        budget_class: expensive
+        promotion_weight: 0.18
+      - id: shiftbench
+        family: robustness
+        primary_skill: recovery_after_distribution_shift
+        budget_class: medium
+        promotion_weight: 0.10
+      - id: efficiency_guardrail
+        family: efficiency
+        primary_skill: cost_latency_memory_growth
+        budget_class: cheap
+        promotion_weight: 0.10
+
+  tier3_optional:
+    goal: multimodal expansion
+    required: false
+    benchmarks:
+      - id: emembench
+        family: episodic_multimodal
+        primary_skill: interactive_episodic_memory
+        budget_class: expensive
+      - id: memgui_bench
+        family: gui_memory
+        primary_skill: cross_temporal_cross_spatial_retention
+        budget_class: expensive

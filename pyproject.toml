@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prism-memory"
+version = "0.1.0"
+description = "PRISM-Memory: proposition-level conversational memory plus a hybrid memory research harness."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Asad Ismail"},
+]
+dependencies = [
+  "PyYAML>=6.0",
+  "datasets>=2.18",
+  "pandas>=2.0",
+  "openai>=1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Asad-Ismail/prism-memory"
+Space = "https://huggingface.co/spaces/AsadIsmail/prism-memory"
+Documentation = "https://github.com/Asad-Ismail/prism-memory#readme"
+
+[project.optional-dependencies]
+space = [
+  "gradio>=5.0",
+]
+research = [
+  "numpy>=1.26",
+  "torch>=2.2",
+  "transformers>=4.40",
+  "peft>=0.13",
+  "bitsandbytes>=0.43",
+]
+alfworld = [
+  "textworld>=1.6.2",
+]
+dev = [
+  "pytest>=8.0",
+]
+
+[tool.setuptools]
+packages = ["frontier_memory"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

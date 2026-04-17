@@ -1,0 +1,139 @@
+candidate_id: candidate_template
+parent_ids: []
+status: draft
+owner: autoresearch
+track: hybrid_memory
+
+hypothesis: >
+  Replace this with one falsifiable hypothesis only.
+
+pivot_reason: null
+
+memory:
+  episodic:
+    enabled: true
+    source_of_truth: append_only_event_log
+    storage: trace_graph
+    granularity: step
+    provenance_required: true
+
+  semantic:
+    enabled: true
+    representation: proposition_graph
+    canonicalization:
+      enabled: true
+      merge_similarity: 0.92
+      temporal_update_policy: newest_with_provenance
+
+  procedural:
+    enabled: true
+    unit_type: hierarchical_playbook
+    abstraction_levels:
+      - step
+      - routine
+      - playbook
+    build:
+      mode: hybrid
+      use_successes: true
+      use_failures: true
+    reliability:
+      model: beta_posterior
+      prior_alpha: 1.0
+      prior_beta: 1.0
+
+  tool_memory:
+    enabled: false
+    representation: capability_notes
+
+consolidation:
+  cadence: nightly
+  keep_raw_trace_forever: true
+  passes:
+    - extract_negative_constraints
+    - mark_critical_vs_noise
+    - merge_duplicates
+    - split_overbroad_routines
+    - compose_playbooks
+    - deprecate_stale
+    - compact_summaries
+  thresholds:
+    merge_similarity: 0.90
+    min_evidence_for_refinement: 3
+    stale_days: 30
+    prune_confidence_below: 0.15
+  budget:
+    max_traces_per_cycle: 500
+    max_llm_calls: 100
+
+retrieval:
+  router: hybrid
+  order:
+    - procedural
+    - semantic
+    - episodic
+  planning_mode: direct_then_decompose
+  top_k:
+    procedural: 5
+    semantic: 8
+    episodic: 3
+  rerank:
+    enabled: true
+    method: cross_encoder_or_llm
+
+controller:
+  architecture: single_agent
+  orchestrator_memory: false
+  worker_memory: false
+  use_policy: inject_minimal_supporting_context
+  update_policy: validate_then_replace
+  write_gates:
+    require_trace_link: true
+    require_environment_feedback: true
+    allow_unverified_summaries: false
+
+benchmarks:
+  tier0:
+    - alfworld_proxy
+    - travelplanner_proxy
+    - compiler_unit
+  tier1:
+    - alfworld_seen_shard
+    - alfworld_unseen_shard
+    - travelplanner_dev_shard
+  tier2:
+    - mem2actbench
+    - memoryarena
+    - memoryagentbench
+    - proced_mem
+    - shiftbench
+
+budgets:
+  rollout_minutes: 15
+  max_live_runs: 20
+  max_token_cost_usd: 25
+
+mutation_surface:
+  allowed:
+    - consolidation.passes
+    - consolidation.thresholds
+    - retrieval.router
+    - retrieval.top_k
+    - controller.architecture
+    - controller.write_gates
+    - controller.use_policy
+    - memory.procedural.reliability
+  forbidden:
+    - benchmark_labels
+    - benchmark_gold_data
+    - historical_logs
+    - scoring_weights
+
+success_criteria:
+  must_not_regress:
+    - tier1_required
+    - shift_recovery
+  target:
+    - improve_global_weighted_score
+
+notes:
+  - Add benchmark-specific or implementation-specific notes here.

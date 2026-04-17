@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+
+# Environments
+.env
+.env.*
+.venv/
+venv/
+
+# Local tooling
+.codex
+space/.gradio/
+candidates/generated/
+logs/runs/
+logs/*_smoke.jsonl
+
+# Optional local benchmark checkouts
+external/**/.git/
+external/TravelPlanner/
+external/alfworld/
+external/MemP/
+external/agent-workflow-memory/
+external/evolving-memory/

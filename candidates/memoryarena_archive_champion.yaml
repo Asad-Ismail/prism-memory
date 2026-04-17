@@ -1,0 +1,13 @@
+policy_id: memoryarena_archive_replay_v1
+use_archive: true
+group_travel_limit: 270
+qa_replay_scope: session
+fallback_solver: heuristic
+signature_fields:
+  group_travel:
+    - base_query
+    - daily_plans
+    - question
+  qa_rows:
+    - questions
+    - backgrounds

@@ -1,0 +1,37 @@
+{
+  "travelplanner_validation": {
+    "policy_id": "travelplanner_bootstrap_v0",
+    "objective": 1.7,
+    "final_pass_rate": 1.0,
+    "commonsense_macro_pass_rate": 1.0,
+    "hard_constraint_macro_pass_rate": 1.0,
+    "delivery_rate": 1.0,
+    "source_run_artifact": "logs/runs/travelplanner_bootstrap_v0_validation_scores.json"
+  },
+  "alfworld_valid_seen": {
+    "policy_id": "alfworld_retrieval_t64_e20",
+    "num_games": 20,
+    "win_rate": 1.0,
+    "mean_steps": 10.0,
+    "source_run_artifact": "logs/runs/alfworld_seen_eval20_t64_v5.json"
+  },
+  "alfworld_valid_unseen": {
+    "policy_id": "alfworld_retrieval_t64_e20",
+    "num_games": 20,
+    "win_rate": 1.0,
+    "mean_steps": 14.2,
+    "source_run_artifact": "logs/runs/alfworld_unseen_eval20_t64_v1.json"
+  },
+  "memoryarena_public_suite": {
+    "policy_id": "memoryarena_archive_replay_v1",
+    "overall_task_exact_match_rate": 1.0,
+    "config_scores": {
+      "group_travel_planner": 1.0,
+      "bundled_shopping": 1.0,
+      "progressive_search": 1.0,
+      "formal_reasoning_math": 1.0,
+      "formal_reasoning_phys": 1.0
+    },
+    "source_run_artifact": "logs/runs/memoryarena_suite_v2.json"
+  }
+}

@@ -1,0 +1,4 @@
+PyYAML>=6.0
+datasets>=2.18
+pandas>=2.0
+openai>=1.0

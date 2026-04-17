@@ -1,0 +1,133 @@
+candidate_id: bootstrap_v0_iter_20260416231328_02
+memory:
+  episodic:
+    enabled: true
+    provenance_required: true
+    source_of_truth: append_only_event_log
+    storage: trace_graph
+    granularity: step
+  semantic:
+    enabled: true
+    representation: proposition_graph
+    canonicalization:
+      enabled: true
+      merge_similarity: 0.92
+      temporal_update_policy: newest_with_provenance
+  procedural:
+    enabled: true
+    unit_type: hierarchical_playbook
+    build:
+      mode: hybrid
+      use_successes: true
+      use_failures: true
+    reliability:
+      model: beta_posterior
+      prior_alpha: 1.0
+      prior_beta: 1.0
+    abstraction_levels:
+    - step
+    - routine
+    - playbook
+  tool_memory:
+    enabled: true
+    representation: capability_and_failure_notes
+consolidation:
+  cadence: nightly
+  passes:
+  - extract_negative_constraints
+  - mark_critical_vs_noise
+  - split_overbroad_routines
+  - compose_playbooks
+  - deprecate_stale
+  - compact_summaries
+  thresholds:
+    merge_similarity: 0.9
+    min_evidence_for_refinement: 3
+    stale_days: 30
+    prune_confidence_below: 0.15
+  keep_raw_trace_forever: true
+  budget:
+    max_traces_per_cycle: 500
+    max_llm_calls: 100
+retrieval:
+  router: hybrid
+  order:
+  - episodic
+  - semantic
+  - procedural
+  planning_mode: direct_then_decompose
+  top_k:
+    procedural: 5
+    semantic: 8
+    episodic: 5
+  rerank:
+    enabled: true
+    method: cross_encoder_or_llm
+controller:
+  architecture: single_agent
+  use_policy: inject_minimal_supporting_context
+  update_policy: validate_then_replace
+  write_gates:
+    require_trace_link: true
+    require_environment_feedback: true
+    allow_unverified_summaries: false
+  orchestrator_memory: false
+  worker_memory: false
+mutation_surface:
+  allowed:
+  - consolidation.passes
+  - consolidation.thresholds
+  - retrieval.router
+  - retrieval.top_k
+  - controller.architecture
+  - controller.write_gates
+  - controller.use_policy
+  - memory.procedural.reliability
+  forbidden:
+  - benchmark_labels
+  - benchmark_gold_data
+  - historical_logs
+  - scoring_weights
+parent_ids:
+- bootstrap_v0
+status: trial
+owner: autoresearch
+track: hybrid_semantic_procedural
+hypothesis: 'The best near-term search direction is a hybrid memory system with append-only
+  episodic traces, compiled semantic memory, hierarchical procedural memory, and a
+  nightly consolidation loop that merges duplicates, extracts failure constraints,
+  and deprecates stale routines.
+
+  '
+pivot_reason: auto search iteration
+benchmarks:
+  tier0:
+  - alfworld_proxy
+  - travelplanner_proxy
+  - compiler_unit
+  tier1:
+  - alfworld_seen_shard
+  - alfworld_unseen_shard
+  - travelplanner_dev_shard
+  tier2:
+  - mem2actbench
+  - memoryarena
+  - memoryagentbench
+  - proced_mem
+  - shiftbench
+budgets:
+  rollout_minutes: 15
+  max_live_runs: 20
+  max_token_cost_usd: 25
+initial_reproduction_queue:
+- macla_like
+- memp_like
+- awm_like
+- legomem_like
+- evolving_memory_like
+first_ablation_queue:
+- dream_compiler_on_vs_off
+- failure_constraints_on_vs_off
+- beta_reliability_vs_flat_reliability
+- procedural_first_router_vs_semantic_first_router
+- single_agent_vs_orchestrator_worker
