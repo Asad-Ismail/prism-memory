@@ -141,6 +141,15 @@ checkpoint from the original `better_memory` project.
 This comparison holds the QA layer constant. It compares extractor against
 extractor, not a full end-to-end GPT-4.1 system.
 
+## Why this is useful
+
+- It keeps hard limits and preferences available for later workflow generation.
+- It keeps current state separate from future plans.
+- It supports dated recall and clean refusal on unsupported questions.
+
+See [docs/release/memory-scenarios.md](docs/release/memory-scenarios.md) for
+the compact end-to-end examples.
+
 ## Load the adapter
 
 ```python

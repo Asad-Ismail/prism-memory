@@ -29,6 +29,9 @@ SKILL_CANDIDATES = [
     ROOT / "docs" / "release" / "extraction-skill.md",
     ROOT / "MEMORY_EXTRACTION_SKILL.md",
 ]
+USE_CASE_CANDIDATES = [
+    ROOT / "docs" / "release" / "memory-scenarios.md",
+]
 DATASET_CANDIDATES = [
     ROOT / "docs" / "release" / "datasets.md",
     ROOT / "DATASETS.md",
@@ -88,6 +91,10 @@ def _load_skill() -> str:
     return _load_markdown(SKILL_CANDIDATES, "Skill document not found.")
 
 
+def _load_use_cases() -> str:
+    return _load_markdown(USE_CASE_CANDIDATES, "End-to-end scenario summary not found.")
+
+
 def _load_datasets() -> str:
     return _load_markdown(DATASET_CANDIDATES, "Dataset summary not found.")
 
@@ -118,7 +125,7 @@ def release_markdown() -> str:
             f"| LongMemEval | `{lme:.3f}` | `0.465` |",
             f"| LoCoMo | `{locomo:.3f}` | `0.536` |",
             "",
-            "This Space shows the public release only: confirmed metrics, held-out benchmark cases, side-by-side extraction examples, the training-data summary, and the canonical extraction skill.",
+            "This Space shows the public release only: confirmed metrics, benchmark-backed cases, end-to-end scenarios, side-by-side extraction examples, the training-data summary, and the canonical extraction skill.",
         ]
     )
 
@@ -249,13 +256,16 @@ with gr.Blocks(title="PRISM-Memory Demo") as demo:
         refresh = gr.Button("Refresh Data")
         refresh.click(fn=lambda: (summary_df(), category_df()), outputs=[metrics, categories])
 
-    with gr.Tab("Memory Cases"):
+    with gr.Tab("Benchmark Cases"):
         choices = scenario_choices() or ["pending"]
         picker = gr.Dropdown(choices=choices, value=choices[0], label="Benchmark Case")
         scenario_md = gr.Markdown()
         scenario_table = gr.Dataframe(interactive=False, wrap=True)
         picker.change(render_scenario, inputs=picker, outputs=[scenario_md, scenario_table])
         demo.load(fn=lambda: render_scenario(choices[0]), outputs=[scenario_md, scenario_table])
+
+    with gr.Tab("Use Cases"):
+        gr.Markdown(_load_use_cases())
 
     with gr.Tab("Extraction Examples"):
         example_choices = readme_example_choices() or ["pending"]

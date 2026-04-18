@@ -103,7 +103,9 @@ It is not intended to be used as a standalone assistant model.
 
 ## Release Artifacts
 
+- [datasets.md](datasets.md)
 - [extraction-skill.md](extraction-skill.md)
+- [memory-scenarios.md](memory-scenarios.md)
 - [technical-blog.md](technical-blog.md)
 - [../../results/confirmed_exp15_summary.json](../../results/confirmed_exp15_summary.json)
 - [../../results/scenario_comparisons.json](../../results/scenario_comparisons.json)

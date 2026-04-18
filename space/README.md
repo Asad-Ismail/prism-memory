@@ -35,6 +35,7 @@ The app reads:
 - `results/scenario_comparisons.json`
 - `results/readme_extraction_examples.json`
 - `docs/release/extraction-skill.md`
+- `docs/release/memory-scenarios.md`
 - `docs/release/datasets.md`
 
 When copied into a standalone Hugging Face Space repo, keep those files beside
@@ -45,9 +46,10 @@ subdirectories.
 
 1. The confirmed metrics for the released checkpoint
 2. Selected benchmark cases showing strengths and failure modes
-3. Side-by-side held-out extraction examples against the GPT-4.1 reference
-4. A compact description of the synthetic generated conversation data and SFT labels
-5. The single canonical memory extraction skill to keep
+3. Short end-to-end scenarios showing why the stored memory is useful later
+4. Side-by-side held-out extraction examples against the GPT-4.1 reference
+5. A compact description of the synthetic conversation data and SFT labels
+6. The single canonical memory extraction skill to keep
 
 ## Local Run
 
