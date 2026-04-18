@@ -49,10 +49,8 @@ upload_folder(
     folder_path=str(bundle_dir),
     commit_message="Update PRISM-Memory Space bundle",
     delete_patterns=[
-        "results/confirmed_exp15_summary.json",
-        "results/readme_extraction_examples.json",
-        "results/scenario_comparisons.json",
-        "results/sft4.json",
+        "docs/release/*.md",
+        "results/*.json",
     ],
 )
 print(f"Uploaded bundle to https://huggingface.co/spaces/{repo_id}")

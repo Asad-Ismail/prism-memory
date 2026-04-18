@@ -4,20 +4,6 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BETTER_MEMORY_ROOT="${BETTER_MEMORY_ROOT:-$ROOT_DIR/../better_memory}"
 
-if [[ -n "${PRISM_CHECKPOINT_DIR:-}" ]]; then
-  CHECKPOINT_DIR="$PRISM_CHECKPOINT_DIR"
-else
-  if [[ -d "$BETTER_MEMORY_ROOT/prism_memory_release" ]]; then
-    CHECKPOINT_DIR="$BETTER_MEMORY_ROOT/prism_memory_release"
-  else
-    CHECKPOINT_DIR="$BETTER_MEMORY_ROOT/exp15_sft_qwen7b_4ep"
-  fi
-fi
-
-BUNDLE_DIR="$ROOT_DIR/dist/model_bundle"
-MODEL_REPO="${1:-}"
-SPACE_REPO="${PRISM_SPACE_REPO:-AsadIsmail/prism-memory}"
-
 required_files=(
   adapter_config.json
   adapter_model.safetensors
@@ -27,12 +13,52 @@ required_files=(
   training_args.bin
 )
 
-for relpath in "${required_files[@]}"; do
-  if [[ ! -f "$CHECKPOINT_DIR/$relpath" ]]; then
-    echo "Missing required checkpoint file: $CHECKPOINT_DIR/$relpath" >&2
-    exit 1
+is_checkpoint_dir() {
+  local candidate="$1"
+  [[ -n "$candidate" && -d "$candidate" ]] || return 1
+  for relpath in "${required_files[@]}"; do
+    [[ -f "$candidate/$relpath" ]] || return 1
+  done
+}
+
+find_checkpoint_dir() {
+  local candidate
+
+  if [[ -n "${PRISM_CHECKPOINT_DIR:-}" ]] && is_checkpoint_dir "$PRISM_CHECKPOINT_DIR"; then
+    printf '%s\n' "$PRISM_CHECKPOINT_DIR"
+    return 0
   fi
-done
+
+  for candidate in \
+    "$BETTER_MEMORY_ROOT/prism_memory_release" \
+    "$BETTER_MEMORY_ROOT/release_model"
+  do
+    if is_checkpoint_dir "$candidate"; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+
+  while IFS= read -r candidate; do
+    candidate="${candidate%/adapter_model.safetensors}"
+    if is_checkpoint_dir "$candidate"; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done < <(find "$BETTER_MEMORY_ROOT" -maxdepth 3 -type f -name adapter_model.safetensors | sort)
+
+  return 1
+}
+
+CHECKPOINT_DIR="$(find_checkpoint_dir || true)"
+if [[ -z "$CHECKPOINT_DIR" ]]; then
+  echo "Could not locate a PRISM checkpoint directory. Set PRISM_CHECKPOINT_DIR to the adapter folder." >&2
+  exit 1
+fi
+
+BUNDLE_DIR="$ROOT_DIR/dist/model_bundle"
+MODEL_REPO="${1:-}"
+SPACE_REPO="${PRISM_SPACE_REPO:-AsadIsmail/prism-memory}"
 
 rm -rf "$BUNDLE_DIR"
 mkdir -p "$BUNDLE_DIR/docs/release" "$BUNDLE_DIR/results"
@@ -295,10 +321,8 @@ upload_folder(
     folder_path=str(bundle_dir),
     commit_message="Publish PRISM-Memory adapter bundle",
     delete_patterns=[
-        "results/confirmed_exp15_summary.json",
-        "results/readme_extraction_examples.json",
-        "results/scenario_comparisons.json",
-        "results/sft4.json",
+        "docs/release/*.md",
+        "results/*.json",
     ],
 )
 print(f"Uploaded bundle to https://huggingface.co/{repo_id}")
