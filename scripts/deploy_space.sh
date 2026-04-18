@@ -14,11 +14,10 @@ cp "$ROOT_DIR/space/requirements.txt" "$BUNDLE_DIR/requirements.txt"
 cp "$ROOT_DIR/docs/release/extraction-skill.md" "$BUNDLE_DIR/docs/release/extraction-skill.md"
 cp "$ROOT_DIR/docs/release/datasets.md" "$BUNDLE_DIR/docs/release/datasets.md"
 cp "$ROOT_DIR/docs/release/extraction-examples.md" "$BUNDLE_DIR/docs/release/extraction-examples.md"
-cp "$ROOT_DIR/docs/release/memory-scenarios.md" "$BUNDLE_DIR/docs/release/memory-scenarios.md"
 cp "$ROOT_DIR/docs/release/release-results.md" "$BUNDLE_DIR/docs/release/release-results.md"
 cp "$ROOT_DIR/results/release_summary.json" "$BUNDLE_DIR/results/release_summary.json"
 cp "$ROOT_DIR/results/extraction_examples.json" "$BUNDLE_DIR/results/extraction_examples.json"
-cp "$ROOT_DIR/results/benchmark_cases.json" "$BUNDLE_DIR/results/benchmark_cases.json"
+cp "$ROOT_DIR/results/try_it_sessions.json" "$BUNDLE_DIR/results/try_it_sessions.json"
 
 echo "Prepared Space bundle at: $BUNDLE_DIR"
 

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ci_rollout",
+    "title": "CI rollout and platform constraints",
+    "note": "Numeric limits, alert preferences, and rollout state stay compact and queryable.",
+    "later_question": "What is the current concurrency limit, how should Slack alerts behave, and when is mTLS planned?",
+    "answer_from_memory": "The current GitHub Actions concurrency limit is 20 jobs. Slack notifications should be aggregated and concise. mTLS is planned for phase two after the canary rollout.",
+    "turns": [
+      {
+        "date": "2025-03-01",
+        "speaker": "Dana",
+        "text": "We have 20 concurrent jobs max on GitHub Actions right now. Keep Snyk Slack notifications aggregated and concise, not one alert per repo."
+      },
+      {
+        "date": "2025-03-02",
+        "speaker": "Ravi",
+        "text": "Let's start with incremental scans and matrix jobs first, then widen coverage after the baseline stabilizes."
+      },
+      {
+        "date": "2025-03-07",
+        "speaker": "Dana",
+        "text": "No mTLS yet. Put it in phase two after the canary rollout."
+      }
+    ]
+  },
+  {
+    "id": "travel_replan",
+    "title": "Trip updates and hard constraints",
+    "note": "Updated plans should replace stale ones while durable constraints remain.",
+    "later_question": "Where is the trip now, on what date, and what flight constraint still applies?",
+    "answer_from_memory": "The current trip is to Porto on September 21, 2025, and red-eye flights are still off limits.",
+    "turns": [
+      {
+        "date": "2025-06-12",
+        "speaker": "Maya",
+        "text": "We booked the Lisbon trip for September 14. I want a quiet hotel near Alfama, and no red-eye flights."
+      },
+      {
+        "date": "2025-06-18",
+        "speaker": "Omar",
+        "text": "The outbound should leave after 9am because early flights wreck me."
+      },
+      {
+        "date": "2025-07-02",
+        "speaker": "Maya",
+        "text": "Update the plan: Lisbon is off. We are going to Porto on September 21 instead, still no red-eye flights."
+      }
+    ]
+  },
+  {
+    "id": "health_hobby",
+    "title": "Health constraints and new routines",
+    "note": "Personal constraints, routines, and hobbies should stay available for later coaching or reminders.",
+    "later_question": "What hobby did Sam start, what class did he sign up for, and what health constraints matter now?",
+    "answer_from_memory": "Sam started painting, signed up for a Saturday watercolor class downtown, should keep sodium under 2 grams per day, and wants to avoid late-night coffee.",
+    "turns": [
+      {
+        "date": "2025-08-03",
+        "speaker": "Sam",
+        "text": "My doctor wants me to keep sodium under 2 grams a day. I started painting on weekends because it helps me decompress."
+      },
+      {
+        "date": "2025-08-17",
+        "speaker": "Sam",
+        "text": "I bought watercolors and signed up for a Saturday class downtown."
+      },
+      {
+        "date": "2025-09-01",
+        "speaker": "Sam",
+        "text": "Skip late-night coffee from now on; it wrecks my sleep."
+      }
+    ]
+  }
+]

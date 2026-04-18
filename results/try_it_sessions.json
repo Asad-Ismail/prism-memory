@@ -1,0 +1,194 @@
+{
+  "model_name": "PRISM-Memory 7B Adapter",
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "examples": [
+    {
+      "id": "ci_rollout",
+      "title": "CI rollout and platform constraints",
+      "note": "Numeric limits, alert preferences, and rollout state stay compact and queryable.",
+      "transcript": "[2025-03-01] Dana: We have 20 concurrent jobs max on GitHub Actions right now. Keep Snyk Slack notifications aggregated and concise, not one alert per repo.\n[2025-03-02] Ravi: Let's start with incremental scans and matrix jobs first, then widen coverage after the baseline stabilizes.\n[2025-03-07] Dana: No mTLS yet. Put it in phase two after the canary rollout.",
+      "later_question": "What is the current concurrency limit, how should Slack alerts behave, and when is mTLS planned?",
+      "answer_from_memory": "The current GitHub Actions concurrency limit is 20 jobs. Slack notifications should be aggregated and concise. mTLS is planned for phase two after the canary rollout.",
+      "source_mode": "released_model_precomputed",
+      "turns": [
+        {
+          "turn_index": 1,
+          "date": "2025-03-01",
+          "speaker": "Dana",
+          "text": "We have 20 concurrent jobs max on GitHub Actions right now. Keep Snyk Slack notifications aggregated and concise, not one alert per repo.",
+          "prism_memory": [
+            "GitHub Actions concurrency limit: 20 concurrent jobs",
+            "Snyk Slack notifications aggregated and concise; no separate alerts per repo"
+          ],
+          "memory_store_after_turn": [
+            "GitHub Actions concurrency limit: 20 concurrent jobs",
+            "Snyk Slack notifications aggregated and concise; no separate alerts per repo"
+          ]
+        },
+        {
+          "turn_index": 2,
+          "date": "2025-03-02",
+          "speaker": "Ravi",
+          "text": "Let's start with incremental scans and matrix jobs first, then widen coverage after the baseline stabilizes.",
+          "prism_memory": [
+            "Plan: start with incremental scans and matrix jobs; widen coverage after baseline stabilizes"
+          ],
+          "memory_store_after_turn": [
+            "GitHub Actions concurrency limit: 20 concurrent jobs",
+            "Snyk Slack notifications aggregated and concise; no separate alerts per repo",
+            "Plan: start with incremental scans and matrix jobs; widen coverage after baseline stabilizes"
+          ]
+        },
+        {
+          "turn_index": 3,
+          "date": "2025-03-07",
+          "speaker": "Dana",
+          "text": "No mTLS yet. Put it in phase two after the canary rollout.",
+          "prism_memory": [
+            "No mutual TLS enabled; mutual TLS will be implemented in phase two after the canary rollout."
+          ],
+          "memory_store_after_turn": [
+            "GitHub Actions concurrency limit: 20 concurrent jobs",
+            "Snyk Slack notifications aggregated and concise; no separate alerts per repo",
+            "Plan: start with incremental scans and matrix jobs; widen coverage after baseline stabilizes",
+            "No mutual TLS enabled; mutual TLS will be implemented in phase two after the canary rollout."
+          ]
+        }
+      ],
+      "final_memory": [
+        "GitHub Actions concurrency limit: 20 concurrent jobs",
+        "Snyk Slack notifications aggregated and concise; no separate alerts per repo",
+        "Plan: start with incremental scans and matrix jobs; widen coverage after baseline stabilizes",
+        "No mutual TLS enabled; mutual TLS will be implemented in phase two after the canary rollout."
+      ]
+    },
+    {
+      "id": "travel_replan",
+      "title": "Trip updates and hard constraints",
+      "note": "Updated plans should replace stale ones while durable constraints remain.",
+      "transcript": "[2025-06-12] Maya: We booked the Lisbon trip for September 14. I want a quiet hotel near Alfama, and no red-eye flights.\n[2025-06-18] Omar: The outbound should leave after 9am because early flights wreck me.\n[2025-07-02] Maya: Update the plan: Lisbon is off. We are going to Porto on September 21 instead, still no red-eye flights.",
+      "later_question": "Where is the trip now, on what date, and what flight constraint still applies?",
+      "answer_from_memory": "The current trip is to Porto on September 21, 2025, and red-eye flights are still off limits.",
+      "source_mode": "released_model_precomputed",
+      "turns": [
+        {
+          "turn_index": 1,
+          "date": "2025-06-12",
+          "speaker": "Maya",
+          "text": "We booked the Lisbon trip for September 14. I want a quiet hotel near Alfama, and no red-eye flights.",
+          "prism_memory": [
+            "Lisbon trip booked for September 14",
+            "Prefers a quiet hotel near Alfama",
+            "Prefers no red-eye flights"
+          ],
+          "memory_store_after_turn": [
+            "Lisbon trip booked for September 14",
+            "Prefers a quiet hotel near Alfama",
+            "Prefers no red-eye flights"
+          ]
+        },
+        {
+          "turn_index": 2,
+          "date": "2025-06-18",
+          "speaker": "Omar",
+          "text": "The outbound should leave after 9am because early flights wreck me.",
+          "prism_memory": [
+            "Outbound flight should depart after 9am."
+          ],
+          "memory_store_after_turn": [
+            "Lisbon trip booked for September 14",
+            "Prefers a quiet hotel near Alfama",
+            "Prefers no red-eye flights",
+            "Outbound flight should depart after 9am."
+          ]
+        },
+        {
+          "turn_index": 3,
+          "date": "2025-07-02",
+          "speaker": "Maya",
+          "text": "Update the plan: Lisbon is off. We are going to Porto on September 21 instead, still no red-eye flights.",
+          "prism_memory": [
+            "Lisbon trip canceled; Porto trip scheduled for September 21.",
+            "No red-eye flights for Porto trip."
+          ],
+          "memory_store_after_turn": [
+            "Lisbon trip booked for September 14",
+            "Prefers a quiet hotel near Alfama",
+            "Prefers no red-eye flights",
+            "Outbound flight should depart after 9am.",
+            "Lisbon trip canceled; Porto trip scheduled for September 21.",
+            "No red-eye flights for Porto trip."
+          ]
+        }
+      ],
+      "final_memory": [
+        "Lisbon trip booked for September 14",
+        "Prefers a quiet hotel near Alfama",
+        "Prefers no red-eye flights",
+        "Outbound flight should depart after 9am.",
+        "Lisbon trip canceled; Porto trip scheduled for September 21.",
+        "No red-eye flights for Porto trip."
+      ]
+    },
+    {
+      "id": "health_hobby",
+      "title": "Health constraints and new routines",
+      "note": "Personal constraints, routines, and hobbies should stay available for later coaching or reminders.",
+      "transcript": "[2025-08-03] Sam: My doctor wants me to keep sodium under 2 grams a day. I started painting on weekends because it helps me decompress.\n[2025-08-17] Sam: I bought watercolors and signed up for a Saturday class downtown.\n[2025-09-01] Sam: Skip late-night coffee from now on; it wrecks my sleep.",
+      "later_question": "What hobby did Sam start, what class did he sign up for, and what health constraints matter now?",
+      "answer_from_memory": "Sam started painting, signed up for a Saturday watercolor class downtown, should keep sodium under 2 grams per day, and wants to avoid late-night coffee.",
+      "source_mode": "released_model_precomputed",
+      "turns": [
+        {
+          "turn_index": 1,
+          "date": "2025-08-03",
+          "speaker": "Sam",
+          "text": "My doctor wants me to keep sodium under 2 grams a day. I started painting on weekends because it helps me decompress.",
+          "prism_memory": [
+            "Doctor recommended Sam limit sodium intake to 2 grams per day.",
+            "Sam paints on weekends as a decompression activity."
+          ],
+          "memory_store_after_turn": [
+            "Doctor recommended Sam limit sodium intake to 2 grams per day.",
+            "Sam paints on weekends as a decompression activity."
+          ]
+        },
+        {
+          "turn_index": 2,
+          "date": "2025-08-17",
+          "speaker": "Sam",
+          "text": "I bought watercolors and signed up for a Saturday class downtown.",
+          "prism_memory": [
+            "Sam bought watercolors and signed up for a Saturday painting class downtown."
+          ],
+          "memory_store_after_turn": [
+            "Doctor recommended Sam limit sodium intake to 2 grams per day.",
+            "Sam paints on weekends as a decompression activity.",
+            "Sam bought watercolors and signed up for a Saturday painting class downtown."
+          ]
+        },
+        {
+          "turn_index": 3,
+          "date": "2025-09-01",
+          "speaker": "Sam",
+          "text": "Skip late-night coffee from now on; it wrecks my sleep.",
+          "prism_memory": [
+            "Sam decided to skip late-night coffee starting now."
+          ],
+          "memory_store_after_turn": [
+            "Doctor recommended Sam limit sodium intake to 2 grams per day.",
+            "Sam paints on weekends as a decompression activity.",
+            "Sam bought watercolors and signed up for a Saturday painting class downtown.",
+            "Sam decided to skip late-night coffee starting now."
+          ]
+        }
+      ],
+      "final_memory": [
+        "Doctor recommended Sam limit sodium intake to 2 grams per day.",
+        "Sam paints on weekends as a decompression activity.",
+        "Sam bought watercolors and signed up for a Saturday painting class downtown.",
+        "Sam decided to skip late-night coffee starting now."
+      ]
+    }
+  ]
+}

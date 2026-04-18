@@ -20,6 +20,7 @@ It matches the root repo story:
 - one released model
 - one extraction behavior
 - one set of confirmed benchmark results
+- one interactive turn-by-turn demo
 - one compact explanation of the synthetic training data and held-out examples
 
 Within the GitHub repo, this directory is a first-class public surface. The
@@ -31,10 +32,9 @@ artifacts needed for Hugging Face.
 The app reads:
 
 - `results/release_summary.json`
-- `results/benchmark_cases.json`
 - `results/extraction_examples.json`
+- `results/try_it_sessions.json`
 - `docs/release/extraction-skill.md`
-- `docs/release/memory-scenarios.md`
 - `docs/release/datasets.md`
 
 When copied into a standalone Hugging Face Space repo, keep those files beside
@@ -44,11 +44,15 @@ subdirectories.
 ## What It Shows
 
 1. The confirmed metrics for the released model
-2. Selected benchmark cases showing strengths and failure modes
-3. Short end-to-end scenarios showing why the stored memory is useful later
-4. Side-by-side held-out extraction examples against the GPT-4.1 reference
-5. A compact description of the synthetic conversation data and supervision
-6. The single canonical memory extraction skill to keep
+2. A `Try It` flow with bundled multi-turn sessions and pasted transcript input
+3. Side-by-side held-out extraction examples against the GPT-4.1 reference
+4. A compact description of the synthetic conversation data and supervision
+5. The single canonical memory extraction skill to keep
+
+The bundled example sessions use precomputed outputs from the released model.
+Custom pasted sessions use live model inference when the runtime can load the
+adapter; otherwise the Space falls back to a lightweight contract-preserving
+preview.
 
 ## Local Run
 
@@ -66,9 +70,9 @@ bash scripts/deploy_space.sh
 Useful bundled files:
 
 - `docs/release/extraction-skill.md`
-- `docs/release/memory-scenarios.md`
 - `docs/release/datasets.md`
 - `docs/release/extraction-examples.md`
 - `docs/release/release-results.md`
 - `results/release_summary.json`
 - `results/extraction_examples.json`
+- `results/try_it_sessions.json`

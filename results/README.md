@@ -10,7 +10,7 @@ release story.
 | `release_summary.json` | confirmed summary for the released PRISM-Memory adapter |
 | `release_model.json` | single-model confirmation payload for the released adapter |
 | `extraction_examples.json` | selected held-out GPT-4.1-vs-PRISM extraction comparisons used by the main README and Space |
-| `benchmark_cases.json` | curated benchmark cases used by the demo |
+| `try_it_sessions.json` | bundled multi-turn sessions and released-model outputs for the interactive Space tab |
 | `frontier_memory_benchmarks.json` | tracked summary of promoted external-benchmark results |
 
 ## Internal Comparison Artifact
