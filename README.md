@@ -19,6 +19,7 @@
   <a href="https://huggingface.co/AsadIsmail/prism-memory">HF Model</a> ·
   <a href="https://huggingface.co/spaces/AsadIsmail/prism-memory">Live Space</a> ·
   <a href="docs/release/README.md">Release Docs</a> ·
+  <a href="docs/release/datasets.md">Data</a> ·
   <a href="docs/release/memory-scenarios.md">End-To-End Scenarios</a> ·
   <a href="docs/release/extraction-examples.md">Extraction Examples</a> ·
   <a href="docs/research/README.md">Research Docs</a>
@@ -39,6 +40,12 @@ top of `Qwen/Qwen2.5-7B-Instruct`.
 The comparison holds the QA layer constant. This repo compares
 extractor-against-extractor. It is not making an end-to-end GPT-4.1
 replacement claim.
+
+Training data for the released checkpoint is documented directly in
+[docs/release/datasets.md](docs/release/datasets.md): synthetic multi-session
+conversations plus GPT-4.1-derived proposition labels. The public release uses
+a `20k` training slice from `train_sft.jsonl`; the raw training JSONLs are not
+yet published.
 
 More detail lives in
 [docs/release/release-results.md](docs/release/release-results.md),
