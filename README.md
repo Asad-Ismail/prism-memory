@@ -1,33 +1,42 @@
-# PRISM-Memory
-
-Turn conversations into durable, searchable memory.
-
-PRISM-Memory is a 7B adapter that turns dialogue into compact memory records
-that can be retrieved later.
-
-[HF Model](https://huggingface.co/AsadIsmail/prism-memory) ·
-[Live Space](https://huggingface.co/spaces/AsadIsmail/prism-memory) ·
-[Release Docs](docs/release/README.md)
-
-![PRISM-Memory architecture](assets/prism-memory-architecture.svg)
+<div align="center">
+  <h1>PRISM-Memory</h1>
+  <p><strong>Turn conversations into durable, searchable memory.</strong></p>
+  <p>PRISM-Memory is a 7B adapter that turns dialogue into compact, dated memory records for later retrieval.</p>
+  <p>
+    <a href="https://huggingface.co/AsadIsmail/prism-memory">
+      <img alt="HF Model" src="https://img.shields.io/badge/HF%20Model-PRISM--Memory-FFCC4D?style=for-the-badge&amp;logo=huggingface&amp;logoColor=111111">
+    </a>
+    <a href="https://huggingface.co/spaces/AsadIsmail/prism-memory">
+      <img alt="Live Space" src="https://img.shields.io/badge/Live%20Space-Try%20Demo-2563EB?style=for-the-badge&amp;logo=gradio&amp;logoColor=FFFFFF">
+    </a>
+    <a href="docs/release/README.md">
+      <img alt="Release Docs" src="https://img.shields.io/badge/Release%20Docs-Read%20More-111827?style=for-the-badge&amp;logo=readthedocs&amp;logoColor=FFFFFF">
+    </a>
+  </p>
+  <p>
+    <img src="assets/prism-memory-architecture.svg" alt="PRISM-Memory architecture" width="960">
+  </p>
+</div>
 
 ## Snapshot
 
 - Released model: `PRISM-Memory 7B Adapter`
 - Base model: `Qwen/Qwen2.5-7B-Instruct`
-- Training recipe: `20,000` supervised extraction examples drawn from a
-  `100,427`-example synthetic label bank built on `2,329` synthetic training
-  conversations
-- Evaluation: held-out `LongMemEval` and held-out `LoCoMo`, with the same QA
-  layer held constant for both systems
+- Training data: `20,000` supervised extraction examples from a synthetic
+  multi-session memory corpus
 
 | Benchmark | PRISM-Memory | GPT-4.1-based PropMem reference | Read |
 |---|---:|---:|---|
 | LongMemEval | `0.4768` | `0.4650` | PRISM wins |
 | LoCoMo | `0.4981` | `0.5360` | PRISM trails, but stays competitive |
 
-The comparison in this repo is extractor against extractor. It does not claim
-to replace a full end-to-end GPT-4.1 system.
+This is an extractor-vs-extractor comparison with the QA layer held constant.
+
+Useful entry points:
+[Data](docs/release/datasets.md) ·
+[End-To-End Scenarios](docs/release/memory-scenarios.md) ·
+[Extraction Examples](docs/release/extraction-examples.md) ·
+[Research Docs](docs/research/README.md)
 
 ## Why It Matters
 
