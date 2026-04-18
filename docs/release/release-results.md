@@ -71,7 +71,7 @@ justify two public models.
 
 - [../../results/release_summary.json](../../results/release_summary.json)
 - [../../results/release_model.json](../../results/release_model.json)
-- [../../results/benchmark_cases.json](../../results/benchmark_cases.json)
+- [../../results/try_it_sessions.json](../../results/try_it_sessions.json)
 - [../../results/internal_locomo_pairwise_diffs.json](../../results/internal_locomo_pairwise_diffs.json)
 
 Related docs:

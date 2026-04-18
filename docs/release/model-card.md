@@ -108,7 +108,7 @@ It is not intended for:
 - [memory-scenarios.md](memory-scenarios.md)
 - [technical-blog.md](technical-blog.md)
 - [../../results/release_summary.json](../../results/release_summary.json)
-- [../../results/benchmark_cases.json](../../results/benchmark_cases.json)
+- [../../results/try_it_sessions.json](../../results/try_it_sessions.json)
 - [../../space/app.py](../../space/app.py)
 
 ## Publishing Note

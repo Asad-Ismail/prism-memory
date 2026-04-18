@@ -72,7 +72,7 @@ cp "$CHECKPOINT_DIR/training_args.bin" "$BUNDLE_DIR/training_args.bin"
 cp "$ROOT_DIR/LICENSE" "$BUNDLE_DIR/LICENSE"
 cp "$ROOT_DIR/results/release_summary.json" "$BUNDLE_DIR/results/release_summary.json"
 cp "$ROOT_DIR/results/extraction_examples.json" "$BUNDLE_DIR/results/extraction_examples.json"
-cp "$ROOT_DIR/results/benchmark_cases.json" "$BUNDLE_DIR/results/benchmark_cases.json"
+cp "$ROOT_DIR/results/try_it_sessions.json" "$BUNDLE_DIR/results/try_it_sessions.json"
 
 python - "$ROOT_DIR" "$BUNDLE_DIR" "$SPACE_REPO" <<'PY'
 import json
@@ -274,7 +274,7 @@ More held-out examples live in
 - [docs/release/technical-blog.md](docs/release/technical-blog.md)
 - [results/release_summary.json](results/release_summary.json)
 - [results/extraction_examples.json](results/extraction_examples.json)
-- [results/benchmark_cases.json](results/benchmark_cases.json)
+- [results/try_it_sessions.json](results/try_it_sessions.json)
 
 ## Demo
 
