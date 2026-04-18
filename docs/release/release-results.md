@@ -2,12 +2,12 @@
 
 # PRISM-Memory Release Results
 
-This file summarizes the confirmed release metrics and the internal comparison
-artifacts that informed the public checkpoint choice.
+This page summarizes the confirmed public release metrics and the internal
+comparison evidence that informed the release choice.
 
-## Released Checkpoint
+## Released Model
 
-- Checkpoint: `exp15_sft_qwen7b_4ep`
+- Model: `PRISM-Memory 7B Adapter`
 - Base model: `Qwen/Qwen2.5-7B-Instruct`
 - Adapter type: LoRA
 - Confirmed LoCoMo mean: `0.4981204463`
@@ -15,18 +15,18 @@ artifacts that informed the public checkpoint choice.
 - QA cache hits during confirmation: `460`
 - QA cache misses during confirmation: `0`
 
-## Baseline Context
+## Public Comparison
 
-`PRISM-Memory` fine-tunes `Qwen/Qwen2.5-7B-Instruct` for the proposition
-extraction step that PropMem normally gets from GPT-4.1. On the confirmed run:
+PRISM-Memory fine-tunes `Qwen/Qwen2.5-7B-Instruct` for the memory extraction
+step that the PropMem reference gets from GPT-4.1.
 
-| Benchmark | PRISM-Memory `sft4` | GPT-4.1-based PropMem reference | Read |
+| Benchmark | PRISM-Memory | GPT-4.1-based PropMem reference | Read |
 |---|---:|---:|---|
 | LongMemEval | `0.4768` | `0.4650` | PRISM wins |
-| LoCoMo | `0.4981` | `0.5360` | PRISM trails, but stays close |
+| LoCoMo | `0.4981` | `0.5360` | PRISM trails, but stays competitive |
 
-The QA layer is held constant. This is an extractor-vs-extractor comparison,
-not an end-to-end GPT-4.1 replacement claim.
+The QA layer is held constant. This is an extraction-step comparison, not an
+end-to-end GPT-4.1 replacement claim.
 
 ## LoCoMo Breakdown
 
@@ -49,24 +49,30 @@ not an end-to-end GPT-4.1 replacement claim.
 | single-session-user | `0.9133333333` |
 | temporal-reasoning | `0.4316666667` |
 
-## Internal Comparison That Informed The Release
+## Why This Model Was Released
 
-The closest runner-up was `inferential_from_temporal_heavy`.
+The closest internal runner-up nearly tied the released model on overall
+LoCoMo, but it lost on the broader release profile:
 
-- Confirmed LoCoMo mean: `0.4975893989`
-- Confirmed LongMemEval mean: `0.4688992148`
-- Pairwise LoCoMo disagreements vs `sft4`: `152 / 400`
-- Question-level wins: `56` for `sft4`, `52` for the runner-up
+- lower LongMemEval score: `0.4689`
+- weaker adversarial precision
+- less balanced behavior across the full evaluation surface
 
-The release decision stayed with `sft4` because it preserved the strongest
-LongMemEval score and the strongest adversarial behavior.
+Question-level comparison on held-out LoCoMo:
+
+- disagreements: `152 / 400`
+- questions favoring PRISM-Memory: `56`
+- questions favoring the runner-up: `52`
+
+That is close enough to be a real internal comparison, but not close enough to
+justify two public models.
 
 ## Artifact Files
 
-- [../../results/confirmed_exp15_summary.json](../../results/confirmed_exp15_summary.json)
-- [../../results/scenario_comparisons.json](../../results/scenario_comparisons.json)
-- [../../results/locomo_pairwise_question_diffs.json](../../results/locomo_pairwise_question_diffs.json)
-- [../../results/sft4.json](../../results/sft4.json)
+- [../../results/release_summary.json](../../results/release_summary.json)
+- [../../results/release_model.json](../../results/release_model.json)
+- [../../results/benchmark_cases.json](../../results/benchmark_cases.json)
+- [../../results/internal_locomo_pairwise_diffs.json](../../results/internal_locomo_pairwise_diffs.json)
 
 Related docs:
 

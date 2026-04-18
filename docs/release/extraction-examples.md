@@ -2,9 +2,9 @@
 
 # PRISM-Memory Extraction Examples
 
-Selected held-out examples from the original Exp15 `eval_sft.jsonl` corpus.
-The `GPT-4.1 reference` rows come from the original SFT target propositions.
-The `PRISM-Memory` rows were regenerated from `exp15_sft_qwen7b_4ep` with greedy decoding using the same extraction prompt family used during evaluation.
+Selected held-out examples from the synthetic evaluation split.
+The `GPT-4.1 reference` rows come from the supervised target memory labels.
+The `PRISM-Memory 7B Adapter` rows were regenerated with greedy decoding using the same extraction prompt family used during evaluation.
 
 These examples are illustrations, not the benchmark itself. Use
 [release-results.md](release-results.md) for the aggregate numbers.
@@ -24,7 +24,7 @@ These examples are illustrations, not the benchmark itself. Use
 - No caching beyond basic Docker layer caching
 - Jenkins nodes have limited capacity and experience queue delays during peak commits
 
-**PRISM-Memory `sft4`**
+**PRISM-Memory**
 
 - No Docker caching beyond basic layer caching
 - Jenkins nodes have limited capacity; peak commits cause queue delays
@@ -44,7 +44,7 @@ These examples are illustrations, not the benchmark itself. Use
 - GitHub Actions concurrency limit: 20 concurrent jobs
 - Wants Snyk Slack notifications aggregated and concise, consistent with other pipeline alerts
 
-**PRISM-Memory `sft4`**
+**PRISM-Memory**
 
 - GitHub Actions concurrency limit: 20 concurrent jobs
 - Snyk Slack notifications should be aggregated and concise
@@ -65,7 +65,7 @@ These examples are illustrations, not the benchmark itself. Use
 - mTLS planned in phase two
 - Plan to use canary deployments, traffic splitting, and basic fault injection
 
-**PRISM-Memory `sft4`**
+**PRISM-Memory**
 
 - Sidecar CPU limits set and monitored via Prometheus
 - Istio mTLS planned for phase two
@@ -74,6 +74,6 @@ These examples are illustrations, not the benchmark itself. Use
 ## Regeneration
 
 ```bash
-conda run -n pytorch_p310 python scripts/release/generate_readme_examples.py
+conda run -n pytorch_p310 python scripts/release/generate_extraction_examples.py
 ```
 

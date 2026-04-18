@@ -7,7 +7,7 @@ artifacts.
 
 - The first two use the released held-out extraction examples.
 - The last two use confirmed held-out benchmark cases from
-  [../../results/scenario_comparisons.json](../../results/scenario_comparisons.json).
+  [../../results/benchmark_cases.json](../../results/benchmark_cases.json).
 
 The point is not just that the extractor matches GPT-4.1-style labels. The
 point is that a later system can ask a concrete question and get back a useful,

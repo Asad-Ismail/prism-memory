@@ -1,6 +1,7 @@
 {
-  "source_dataset": "BETTER_MEMORY_ROOT/data/output/eval_sft.jsonl",
-  "model_path": "BETTER_MEMORY_ROOT/exp15_sft_qwen7b_4ep",
+  "dataset_name": "Held-out synthetic evaluation split",
+  "model_name": "PRISM-Memory 7B Adapter",
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
   "output_examples": 3,
   "examples": [
     {

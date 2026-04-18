@@ -16,9 +16,9 @@ cp "$ROOT_DIR/docs/release/datasets.md" "$BUNDLE_DIR/docs/release/datasets.md"
 cp "$ROOT_DIR/docs/release/extraction-examples.md" "$BUNDLE_DIR/docs/release/extraction-examples.md"
 cp "$ROOT_DIR/docs/release/memory-scenarios.md" "$BUNDLE_DIR/docs/release/memory-scenarios.md"
 cp "$ROOT_DIR/docs/release/release-results.md" "$BUNDLE_DIR/docs/release/release-results.md"
-cp "$ROOT_DIR/results/confirmed_exp15_summary.json" "$BUNDLE_DIR/results/confirmed_exp15_summary.json"
-cp "$ROOT_DIR/results/readme_extraction_examples.json" "$BUNDLE_DIR/results/readme_extraction_examples.json"
-cp "$ROOT_DIR/results/scenario_comparisons.json" "$BUNDLE_DIR/results/scenario_comparisons.json"
+cp "$ROOT_DIR/results/release_summary.json" "$BUNDLE_DIR/results/release_summary.json"
+cp "$ROOT_DIR/results/extraction_examples.json" "$BUNDLE_DIR/results/extraction_examples.json"
+cp "$ROOT_DIR/results/benchmark_cases.json" "$BUNDLE_DIR/results/benchmark_cases.json"
 
 echo "Prepared Space bundle at: $BUNDLE_DIR"
 
@@ -48,6 +48,12 @@ upload_folder(
     repo_type="space",
     folder_path=str(bundle_dir),
     commit_message="Update PRISM-Memory Space bundle",
+    delete_patterns=[
+        "results/confirmed_exp15_summary.json",
+        "results/readme_extraction_examples.json",
+        "results/scenario_comparisons.json",
+        "results/sft4.json",
+    ],
 )
 print(f"Uploaded bundle to https://huggingface.co/spaces/{repo_id}")
 PY

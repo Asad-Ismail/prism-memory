@@ -3,7 +3,17 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BETTER_MEMORY_ROOT="${BETTER_MEMORY_ROOT:-$ROOT_DIR/../better_memory}"
-CHECKPOINT_DIR="${PRISM_CHECKPOINT_DIR:-$BETTER_MEMORY_ROOT/exp15_sft_qwen7b_4ep}"
+
+if [[ -n "${PRISM_CHECKPOINT_DIR:-}" ]]; then
+  CHECKPOINT_DIR="$PRISM_CHECKPOINT_DIR"
+else
+  if [[ -d "$BETTER_MEMORY_ROOT/prism_memory_release" ]]; then
+    CHECKPOINT_DIR="$BETTER_MEMORY_ROOT/prism_memory_release"
+  else
+    CHECKPOINT_DIR="$BETTER_MEMORY_ROOT/exp15_sft_qwen7b_4ep"
+  fi
+fi
+
 BUNDLE_DIR="$ROOT_DIR/dist/model_bundle"
 MODEL_REPO="${1:-}"
 SPACE_REPO="${PRISM_SPACE_REPO:-AsadIsmail/prism-memory}"
@@ -34,9 +44,9 @@ cp "$CHECKPOINT_DIR/tokenizer.json" "$BUNDLE_DIR/tokenizer.json"
 cp "$CHECKPOINT_DIR/tokenizer_config.json" "$BUNDLE_DIR/tokenizer_config.json"
 cp "$CHECKPOINT_DIR/training_args.bin" "$BUNDLE_DIR/training_args.bin"
 cp "$ROOT_DIR/LICENSE" "$BUNDLE_DIR/LICENSE"
-cp "$ROOT_DIR/results/confirmed_exp15_summary.json" "$BUNDLE_DIR/results/confirmed_exp15_summary.json"
-cp "$ROOT_DIR/results/readme_extraction_examples.json" "$BUNDLE_DIR/results/readme_extraction_examples.json"
-cp "$ROOT_DIR/results/scenario_comparisons.json" "$BUNDLE_DIR/results/scenario_comparisons.json"
+cp "$ROOT_DIR/results/release_summary.json" "$BUNDLE_DIR/results/release_summary.json"
+cp "$ROOT_DIR/results/extraction_examples.json" "$BUNDLE_DIR/results/extraction_examples.json"
+cp "$ROOT_DIR/results/benchmark_cases.json" "$BUNDLE_DIR/results/benchmark_cases.json"
 
 python - "$ROOT_DIR" "$BUNDLE_DIR" "$SPACE_REPO" <<'PY'
 import json
@@ -76,8 +86,8 @@ for relpath in doc_paths:
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_text(strip_repo_nav(src.read_text()), encoding="utf-8")
 
-summary = json.loads((root_dir / "results/confirmed_exp15_summary.json").read_text())["results"][0]
-examples = json.loads((root_dir / "results/readme_extraction_examples.json").read_text())["examples"]
+summary = json.loads((root_dir / "results/release_summary.json").read_text())["results"][0]
+examples = json.loads((root_dir / "results/extraction_examples.json").read_text())["examples"]
 
 locomo = summary["locomo"]["mean"]
 lme = summary["lme"]["mean"]
@@ -129,8 +139,14 @@ tags:
 # PRISM-Memory
 
 PRISM-Memory is a LoRA adapter that trains `Qwen/Qwen2.5-7B-Instruct` to write
-proposition-level memory from dialogue. It is the released `exp15_sft_qwen7b_4ep`
-checkpoint from the original `better_memory` project.
+proposition-level memory from dialogue. It is a memory-writing component, not a
+general chat model.
+
+## Released model
+
+- Model name: `PRISM-Memory 7B Adapter`
+- Base model: `Qwen/Qwen2.5-7B-Instruct`
+- Adapter type: `LoRA`
 
 ## What this release shows
 
@@ -148,7 +164,7 @@ extractor, not a full end-to-end GPT-4.1 system.
 - It supports dated recall and clean refusal on unsupported questions.
 
 See [docs/release/memory-scenarios.md](docs/release/memory-scenarios.md) for
-the compact end-to-end examples.
+compact end-to-end examples.
 
 ## Load the adapter
 
@@ -168,38 +184,42 @@ base_model = AutoModelForCausalLM.from_pretrained(
 model = PeftModel.from_pretrained(base_model, adapter_id)
 ```
 
-This repo contains the adapter weights only. You still need the base model.
+This repo contains adapter weights only. You still need the base model.
 
 ## Training data
 
 PRISM-Memory was trained on **synthetic** multi-session memory conversations
-with **GPT-4.1-derived proposition labels**. The public release does not use
+with **GPT-4.1-derived** memory-writing labels. The public release does not use
 real user chat logs.
 
-| File | Examples | Role |
+| Item | Count | Notes |
 |---|---:|---|
-| `train.jsonl` | `2,329` conversations | raw synthetic conversation source |
-| `eval.jsonl` | `584` conversations | held-out synthetic conversation source |
-| `train_sft.jsonl` | `100,427` labels | primary SFT source |
-| `train_sft_clean_merged.jsonl` | `20,000` labels | cleaned follow-on base matching the best run |
+| synthetic training conversations | `2,329` | multi-session conversations with inserts, updates, and deletes |
+| synthetic held-out conversations | `584` | evaluation split used for held-out examples |
+| supervised extraction examples | `100,427` | memory-writing labels derived from the synthetic corpus |
+| released training subset | `20,000` | supervised examples used for the public adapter |
 
-The released checkpoint uses a `20k` sample from `train_sft.jsonl`. See
-[docs/release/datasets.md](docs/release/datasets.md) for the full inventory,
-the evaluation surfaces, and the ablations that regressed.
+### Example training item
 
-### Example data item
+**Synthetic scenario**
 
-**Synthetic turn**
+- Domain: cloud infrastructure performance optimization
+- Persona: senior cloud systems engineer at a fintech startup
 
-> yeah, I think starting with incremental scans and parallel matrix jobs makes sense. We have 20 concurrent jobs max on GitHub Actions currently. Also want to keep Slack notifications from Snyk consistent with other pipeline alerts, aggregated and concise.
+**Synthetic user turn**
 
-**Target propositions**
+> Here’s the initial architecture outline: deploy microservices on AWS Fargate, use PostgreSQL 13 as the primary database, plan Kubernetes orchestration, use Redis for caching, and keep API latency under 50ms.
 
-- GitHub Actions concurrency limit: 20 concurrent jobs
-- Wants Snyk Slack notifications aggregated and concise, consistent with other pipeline alerts
+**Target memory records**
 
-The current release makes the data recipe and examples public. The full raw
-training JSONLs are not bundled in this model repo.
+- Deploy microservices on AWS Fargate
+- Orchestrate containers on a Kubernetes cluster (planned)
+- Primary database: PostgreSQL 13
+- Use Redis as an in-memory caching layer
+- Latency target: API responses under 50ms
+
+The release makes the dataset design, counts, and example records public. It
+does not bundle the full raw corpus files.
 
 ## Confirmed results
 
@@ -226,9 +246,9 @@ More held-out examples live in
 - [docs/release/memory-scenarios.md](docs/release/memory-scenarios.md)
 - [docs/release/release-results.md](docs/release/release-results.md)
 - [docs/release/technical-blog.md](docs/release/technical-blog.md)
-- [results/confirmed_exp15_summary.json](results/confirmed_exp15_summary.json)
-- [results/readme_extraction_examples.json](results/readme_extraction_examples.json)
-- [results/scenario_comparisons.json](results/scenario_comparisons.json)
+- [results/release_summary.json](results/release_summary.json)
+- [results/extraction_examples.json](results/extraction_examples.json)
+- [results/benchmark_cases.json](results/benchmark_cases.json)
 
 ## Demo
 
@@ -274,6 +294,12 @@ upload_folder(
     repo_type="model",
     folder_path=str(bundle_dir),
     commit_message="Publish PRISM-Memory adapter bundle",
+    delete_patterns=[
+        "results/confirmed_exp15_summary.json",
+        "results/readme_extraction_examples.json",
+        "results/scenario_comparisons.json",
+        "results/sft4.json",
+    ],
 )
 print(f"Uploaded bundle to https://huggingface.co/{repo_id}")
 PY

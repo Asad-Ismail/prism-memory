@@ -6,20 +6,20 @@ These scripts exist only to build and confirm the public PRISM release surface.
 
 | File | Purpose |
 |---|---|
-| `confirm_exp15_results.py` | replay the original Exp15 eval surface against the cached QA answers and write the public confirmation JSONs |
-| `build_scenario_comparisons.py` | build the curated benchmark cases used by the demo from the shortlist JSON |
-| `generate_readme_examples.py` | regenerate the held-out GPT-4.1-vs-PRISM extraction examples used by the main README and release docs |
-| `readme_example_shortlist.json` | stable shortlist for the README extraction examples |
+| `confirm_release_results.py` | replay the original release eval surface against the cached QA answers and write the public confirmation JSONs |
+| `build_benchmark_cases.py` | build the curated benchmark cases used by the demo from the shortlist JSON |
+| `generate_extraction_examples.py` | regenerate the held-out GPT-4.1-vs-PRISM extraction examples used by the main README and release docs |
+| `extraction_example_shortlist.json` | stable shortlist for the held-out extraction examples |
 | `scenario_shortlist.json` | the curated shortlist of public demo cases |
 
 ## Outputs
 
 These scripts write into [../../results/README.md](../../results/README.md):
 
-- `results/confirmed_exp15_summary.json`
-- `results/readme_extraction_examples.json`
-- `results/scenario_comparisons.json`
-- `results/sft4.json`
+- `results/release_summary.json`
+- `results/release_model.json`
+- `results/extraction_examples.json`
+- `results/benchmark_cases.json`
 
 They also update:
 

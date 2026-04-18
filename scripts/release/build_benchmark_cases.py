@@ -8,8 +8,9 @@ import os
 import re
 from pathlib import Path
 
-from confirm_exp15_results import (
+from confirm_release_results import (
     CHECKPOINTS,
+    MODEL_NAMES,
     build_cache_only_qa,
     ensure_datasets,
     ensure_paths,
@@ -19,7 +20,7 @@ from confirm_exp15_results import (
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parents[1]
 SHORTLIST_PATH = SCRIPT_DIR / "scenario_shortlist.json"
-OUT_PATH = ROOT / "results" / "scenario_comparisons.json"
+OUT_PATH = ROOT / "results" / "benchmark_cases.json"
 LOCOMO_PATH = Path(os.environ.get("PRISM_LOCOMO_PATH", "/tmp/locomo10.json"))
 
 
@@ -180,7 +181,7 @@ def answer_question(prepared: dict, question: str, category: int, qa_fn):
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--models", default="sft4")
+    parser.add_argument("--models", default="release_model")
     args = parser.parse_args()
     import torch
 
@@ -217,6 +218,7 @@ def main() -> int:
                 scenario["systems"].append(
                     {
                         "name": alias,
+                        "display_name": MODEL_NAMES.get(alias, alias),
                         "prediction": prediction,
                         "top_retrieval": top_retrieval,
                     }

@@ -12,13 +12,12 @@ pinned: false
 
 **Hook:** Turn conversations into durable, searchable memory.
 
-This Space is the public demo for the single released `PRISM-Memory`
-checkpoint: `exp15_sft_qwen7b_4ep`, a LoRA adapter on top of
-`Qwen/Qwen2.5-7B-Instruct`.
+This Space is the public demo for the released `PRISM-Memory 7B Adapter`, a
+LoRA adapter on top of `Qwen/Qwen2.5-7B-Instruct`.
 
 It matches the root repo story:
 
-- one released checkpoint
+- one released model
 - one extraction behavior
 - one set of confirmed benchmark results
 - one compact explanation of the synthetic training data and held-out examples
@@ -31,9 +30,9 @@ artifacts needed for Hugging Face.
 
 The app reads:
 
-- `results/confirmed_exp15_summary.json`
-- `results/scenario_comparisons.json`
-- `results/readme_extraction_examples.json`
+- `results/release_summary.json`
+- `results/benchmark_cases.json`
+- `results/extraction_examples.json`
 - `docs/release/extraction-skill.md`
 - `docs/release/memory-scenarios.md`
 - `docs/release/datasets.md`
@@ -44,11 +43,11 @@ subdirectories.
 
 ## What It Shows
 
-1. The confirmed metrics for the released checkpoint
+1. The confirmed metrics for the released model
 2. Selected benchmark cases showing strengths and failure modes
 3. Short end-to-end scenarios showing why the stored memory is useful later
 4. Side-by-side held-out extraction examples against the GPT-4.1 reference
-5. A compact description of the synthetic conversation data and SFT labels
+5. A compact description of the synthetic conversation data and supervision
 6. The single canonical memory extraction skill to keep
 
 ## Local Run
@@ -71,5 +70,5 @@ Useful bundled files:
 - `docs/release/datasets.md`
 - `docs/release/extraction-examples.md`
 - `docs/release/release-results.md`
-- `results/confirmed_exp15_summary.json`
-- `results/readme_extraction_examples.json`
+- `results/release_summary.json`
+- `results/extraction_examples.json`

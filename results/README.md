@@ -7,17 +7,17 @@ release story.
 
 | File | Purpose |
 |---|---|
-| `confirmed_exp15_summary.json` | confirmed release summary for `exp15_sft_qwen7b_4ep` |
-| `readme_extraction_examples.json` | selected held-out GPT-4.1-vs-PRISM extraction comparisons used by the main README |
-| `scenario_comparisons.json` | curated benchmark cases used by the demo |
-| `sft4.json` | single-checkpoint confirmation payload |
+| `release_summary.json` | confirmed summary for the released PRISM-Memory adapter |
+| `release_model.json` | single-model confirmation payload for the released adapter |
+| `extraction_examples.json` | selected held-out GPT-4.1-vs-PRISM extraction comparisons used by the main README and Space |
+| `benchmark_cases.json` | curated benchmark cases used by the demo |
 | `frontier_memory_benchmarks.json` | tracked summary of promoted external-benchmark results |
 
 ## Internal Comparison Artifact
 
 | File | Purpose |
 |---|---|
-| `locomo_pairwise_question_diffs.json` | question-level diff between the release checkpoint and the closest runner-up |
+| `internal_locomo_pairwise_diffs.json` | question-level diff between the release model and the closest runner-up |
 
 See also:
 

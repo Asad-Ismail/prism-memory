@@ -1,7 +1,8 @@
 {
-  "alias": "sft4",
-  "checkpoint": "exp15_sft_qwen7b_4ep",
-  "elapsed_min": 28.93,
+  "model_key": "release_model",
+  "model_name": "PRISM-Memory 7B Adapter",
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "elapsed_min": 30.0,
   "args": {
     "n_lme": 10,
     "context_window": 0,

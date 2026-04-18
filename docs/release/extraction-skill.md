@@ -4,20 +4,20 @@
 
 **Hook:** Turn conversations into durable, searchable memory.
 
-This is the single extraction skill to keep from the `better_memory` work.
-Public release should point to one checkpoint and one extraction behavior:
+This is the single extraction skill the public release keeps.
 
-- **Model:** `exp15_sft_qwen7b_4ep`
+- **Released model:** `PRISM-Memory 7B Adapter`
 - **Base model:** `Qwen/Qwen2.5-7B-Instruct`
 - **Role:** proposition extraction for long-term conversational memory
-- **Why this one:** best confirmed total profile, best adversarial behavior, and
-  best LongMemEval score
+- **Why this one:** strongest confirmed overall release profile, strongest
+  adversarial behavior, and best confirmed LongMemEval score among the release
+  candidates
 
 ## Skill Definition
 
-The extractor operates turn by turn and emits `0-5` atomic propositions per
-turn. Each proposition should be a standalone fact about a person, event,
-preference, or property, with dates carried into the fact when available.
+The extractor operates turn by turn and emits `0-5` atomic memory records per
+turn. Each record should be a standalone fact about a person, event,
+preference, plan, or property, with dates carried into the fact when available.
 
 Canonical prompt:
 
@@ -25,17 +25,14 @@ Canonical prompt:
 You are a memory extraction assistant. Given a conversation turn, extract 0-5 atomic, standalone facts. Each fact must be a complete sentence about a specific person, event, preference, or property. Include dates/times when mentioned. Skip greetings, filler, and questions. Output ONLY a JSON array of strings, e.g. ["fact1", "fact2"] or [].
 ```
 
-This prompt comes from `experiment15_learned_extraction.py` in the upstream
-`better_memory` workspace.
-
 ## Inference Contract
 
-1. Format the turn with speaker and session date.
+1. Format the current turn with speaker and session date.
 2. Extract `0-5` propositions as a JSON array.
-3. Clean speaker references so generic labels become real names.
+3. Clean speaker references so generic labels become real names when possible.
 4. Resolve relative temporal expressions against the session date.
-5. Prefix each proposition with the normalized session date before indexing.
-6. Retrieve with the PRISM hybrid stack, not with the extractor alone.
+5. Prefix each stored proposition with the normalized session date before indexing.
+6. Pair the extractor with the hybrid retrieval stack, not with raw transcript search alone.
 
 ## Retrieval Setup To Keep
 
@@ -50,69 +47,29 @@ Best confirmed retrieval settings:
 - **LongMemEval:** multi-session `k=20`, all other categories `k=8` except
   single-session-user `k=5`
 
-## What Worked
+## What Held Up In The Repo
 
-1. **The original 20k base mattered.**
-   `sft4` came from the exact `train_sft_clean_merged.jsonl` base distribution.
-   Runs that changed the base subset regressed.
+1. The stable `20,000`-example supervised base mattered more than aggressive
+   benchmark-specific add-ons.
+2. Four epochs was enough to reach the useful local optimum for this 7B line.
+3. Explicit date anchoring helped. Benchmark-style relative-date imitation did not.
+4. Post-processing mattered. Speaker cleanup and relative-date resolution made
+   the extracted records usable.
+5. Hybrid retrieval beat simpler sparse-only or dense-only retrieval.
+6. Turn-local extraction worked better than feeding long recent-context windows
+   into the extractor.
 
-2. **Four epochs was the sweet spot.**
-   `sft4` is the local optimum the repo could actually reproduce.
+## What To Avoid
 
-3. **Absolute date anchoring helped.**
-   Temporal repairs worked when the model saw explicit, normalized dates rather
-   than benchmark-specific relative phrasing.
-
-4. **Post-processing mattered.**
-   Speaker cleanup plus relative-date resolution was necessary to turn raw
-   outputs into stable memory records.
-
-5. **Hybrid retrieval beat simpler retrieval.**
-   BM25 + dense + reranking consistently outperformed BM25-only or dense-only
-   approaches.
-
-6. **Turn-local extraction was enough.**
-   The model performed better without feeding long recent-context windows into
-   the extractor.
-
-7. **Multihop supervision preserved inferential behavior.**
-   When temporal data was added, multihop QA was the only extra signal that
-   reliably helped preserve inferential performance.
-
-## What Did Not Work
-
-1. **Relative-date training.**
-   Training the extractor to emit benchmark-style relative dates hurt temporal
-   performance instead of helping it.
-
-2. **LoCoMo-domain SFT data.**
-   Adding LoCoMo training conversations consistently regressed the model.
-
-3. **More than 20k original LME examples.**
-   Scaling the original noisy temporal labels to 50k amplified anchor loss and
-   caused major regression.
-
-4. **Small clean bases.**
-   5k-base follow-on runs forgot too much and collapsed inferential behavior.
-
-5. **Heavy QA multipliers.**
-   High temporal or QA multipliers damaged adversarial precision and LongMemEval.
-
-6. **High learning rates on follow-on QA runs.**
-   Aggressive fine-tuning degraded the traits that made `sft4` good.
-
-7. **Trying to push past the local optimum.**
-   Most post-`sft4` training traded away adversarial performance for narrower
-   gains.
+1. Benchmark-specific format hacks, especially relative-date answer imitation.
+2. Narrow LoCoMo-style SFT add-ons that improve one slice and hurt balance.
+3. Overtraining follow-on variants that trade adversarial precision for narrow gains.
+4. Treating the extractor as a standalone answer model instead of a memory writer.
 
 ## Release Rule
 
-Release only this extraction skill and only this checkpoint publicly:
-
-- `exp15_sft_qwen7b_4ep`
-
-Treat all other checkpoints as internal ablations and learning artifacts, not as
-parallel public releases.
+Public surfaces should expose exactly one extraction behavior and one released
+model. Other runs remain internal research artifacts.
 
 Related docs:
 

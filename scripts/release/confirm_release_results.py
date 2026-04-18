@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Confirm Exp15 checkpoint results against the original evaluation surface.
+"""Confirm PRISM-Memory release results against the original evaluation surface.
 
 This runner does three things the original script does not do cleanly in this
 environment:
@@ -48,35 +48,64 @@ MEMEVAL_LOCOMO = Path(os.environ.get("MEMEVAL_LOCOMO", str(MEMEVAL_ROOT / "data/
 EXPECTED_LOCOMO = Path(os.environ.get("PRISM_LOCOMO_PATH", "/tmp/locomo10.json"))
 QA_CACHE_PATH = BETTER_MEMORY / "openai_qa_cache.json"
 OUT_DIR = ROOT / "results"
+BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
+MODEL_NAMES = {
+    "release_model": "PRISM-Memory 7B Adapter",
+    "runner_up_temporal_inferential": "Internal temporal/inferential runner-up",
+    "temporal_variant": "Internal temporal follow-on variant",
+    "wave2_variant": "Internal wave-two follow-on variant",
+}
+
+
+def _resolve_checkpoint_dir(*candidates: str) -> Path:
+    for candidate in candidates:
+        path = BETTER_MEMORY / candidate
+        if path.exists():
+            return path
+    return BETTER_MEMORY / candidates[-1]
+
 
 CHECKPOINTS = {
-    "sft4": BETTER_MEMORY / "exp15_sft_qwen7b_4ep",
-    "inferential_from_temporal_heavy": BETTER_MEMORY / "exp15_sft_qwen7b_inferential_from_temporal_heavy",
-    "temporal_heavy": BETTER_MEMORY / "exp15_sft_qwen7b_temporal_heavy",
-    "wave2_clean_plus_temporal": BETTER_MEMORY / "exp15_sft_qwen7b_wave2_clean_plus_temporal",
+    "release_model": _resolve_checkpoint_dir("prism_memory_release", "exp15_sft_qwen7b_4ep"),
+    "runner_up_temporal_inferential": _resolve_checkpoint_dir(
+        "prism_memory_runner_up_temporal_inferential",
+        "exp15_sft_qwen7b_inferential_from_temporal_heavy",
+    ),
+    "temporal_variant": _resolve_checkpoint_dir("prism_memory_temporal_variant", "exp15_sft_qwen7b_temporal_heavy"),
+    "wave2_variant": _resolve_checkpoint_dir(
+        "prism_memory_wave2_variant",
+        "exp15_sft_qwen7b_wave2_clean_plus_temporal",
+    ),
 }
 
 LOGGED_RESULTS = {
-    "sft4": {
+    "release_model": {
         "locomo": 0.498,
         "lme": 0.477,
         "locomo_categories": {1: 0.334, 2: 0.498, 3: 0.261, 4: 0.514, 5: 0.884},
     },
-    "inferential_from_temporal_heavy": {
+    "runner_up_temporal_inferential": {
         "locomo": 0.498,
         "lme": 0.469,
         "locomo_categories": {1: 0.328, 2: 0.510, 3: 0.282, 4: 0.508, 5: 0.860},
     },
-    "temporal_heavy": {
+    "temporal_variant": {
         "locomo": 0.493,
         "lme": 0.469,
         "locomo_categories": {1: 0.330, 2: 0.540, 3: 0.213, 4: 0.524, 5: 0.860},
     },
-    "wave2_clean_plus_temporal": {
+    "wave2_variant": {
         "locomo": 0.476,
         "lme": 0.471,
         "locomo_categories": {1: 0.291, 2: 0.472, 3: 0.225, 4: 0.533, 5: 0.860},
     },
+}
+
+ARTIFACT_NAMES = {
+    "release_model": "release_model.json",
+    "runner_up_temporal_inferential": "internal_runner_up.json",
+    "temporal_variant": "internal_temporal_variant.json",
+    "wave2_variant": "internal_wave2_variant.json",
 }
 
 
@@ -252,8 +281,9 @@ def eval_checkpoint(alias: str, args: argparse.Namespace) -> dict:
         }
 
     return {
-        "alias": alias,
-        "checkpoint": ckpt.name,
+        "model_key": alias,
+        "model_name": MODEL_NAMES.get(alias, alias),
+        "base_model": BASE_MODEL,
         "elapsed_min": round(elapsed_min, 2),
         "args": {
             "n_lme": args.n_lme,
@@ -278,7 +308,7 @@ def eval_checkpoint(alias: str, args: argparse.Namespace) -> dict:
 
 
 def print_result(result: dict) -> None:
-    alias = result["alias"]
+    alias = result["model_name"]
     print(f"\n{'=' * 80}")
     print(f"{alias}")
     print(f"{'=' * 80}")
@@ -303,10 +333,10 @@ def write_incremental_outputs(out_dir: Path, all_results: list[dict], failures: 
         "results": all_results,
         "failures": failures,
     }
-    summary_path = out_dir / "confirmed_exp15_summary.json"
+    summary_path = out_dir / "release_summary.json"
     summary_path.write_text(json.dumps(summary, indent=2))
     for result in all_results:
-        model_path = out_dir / f"{result['alias']}.json"
+        model_path = out_dir / ARTIFACT_NAMES.get(result["model_key"], f"{result['model_key']}.json")
         model_path.write_text(json.dumps(result, indent=2))
 
 
@@ -314,8 +344,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--models",
-        default="sft4",
-        help="Comma-separated checkpoint aliases.",
+        default="release_model",
+        help="Comma-separated model keys.",
     )
     parser.add_argument("--n-lme", type=int, default=10)
     parser.add_argument("--context-window", type=int, default=0)
@@ -351,15 +381,15 @@ def main() -> int:
             print_result(result)
             write_incremental_outputs(out_dir, all_results, failures)
         except CacheMissError as exc:
-            failures.append({"alias": alias, "error": str(exc)})
+            failures.append({"model_key": alias, "error": str(exc)})
             write_incremental_outputs(out_dir, all_results, failures)
             print(f"\n[cache-miss] {alias}: {exc}")
         except Exception as exc:  # pragma: no cover - debug aid for long runs
-            failures.append({"alias": alias, "error": f"{type(exc).__name__}: {exc}"})
+            failures.append({"model_key": alias, "error": f"{type(exc).__name__}: {exc}"})
             write_incremental_outputs(out_dir, all_results, failures)
             print(f"\n[failed] {alias}: {type(exc).__name__}: {exc}")
 
-    summary_path = out_dir / "confirmed_exp15_summary.json"
+    summary_path = out_dir / "release_summary.json"
     if not summary_path.exists():
         write_incremental_outputs(out_dir, all_results, failures)
     print(f"\nWrote {summary_path}")
@@ -372,7 +402,7 @@ def main() -> int:
         print("\nLeaderboard:")
         for idx, result in enumerate(ranked, start=1):
             print(
-                f"  {idx}. {result['alias']:<34} "
+                f"  {idx}. {result['model_name']:<34} "
                 f"LoCoMo={result['locomo']['mean']:.3f} "
                 f"LME={result['lme']['mean']:.3f}"
             )

@@ -18,7 +18,8 @@
       "note": "The released model keeps the dated hobby proposition and answers correctly.",
       "systems": [
         {
-          "name": "sft4",
+          "name": "release_model",
+          "display_name": "PRISM-Memory 7B Adapter",
           "prediction": "painting",
           "top_retrieval": [
             "Sam: [18 May 2023] Sam is considering trying painting as a new hobby.",
@@ -44,7 +45,8 @@
       "note": "This tests whether the system refuses to invent an answer when the premise is unsupported.",
       "systems": [
         {
-          "name": "sft4",
+          "name": "release_model",
+          "display_name": "PRISM-Memory 7B Adapter",
           "prediction": "None",
           "top_retrieval": [
             "[2:55 pm on 31 August, 2023] Dave: That guitar has a gorgeous purple hue. Why did you make it so shiny?",
@@ -67,7 +69,8 @@
       "note": "A representative factual miss: the model retrieves the health-risk frame but not the specific diagnosis.",
       "systems": [
         {
-          "name": "sft4",
+          "name": "release_model",
+          "display_name": "PRISM-Memory 7B Adapter",
           "prediction": "serious health risk",
           "top_retrieval": [
             "Sam: [8 October 2023] The doctor told Sam that his weight is a serious health risk.",
@@ -93,7 +96,8 @@
       "note": "A representative inferential miss: retrieval includes both clues, but the model overcommits to the mountain mention.",
       "systems": [
         {
-          "name": "sft4",
+          "name": "release_model",
+          "display_name": "PRISM-Memory 7B Adapter",
           "prediction": "mountains",
           "top_retrieval": [
             "Evan: [27 August 2023] Evan also shared his recent road trip to the Rocky Mountains and love for hiking.",
@@ -119,7 +123,8 @@
       "note": "A representative multi-hop miss: the model retains the coarse book description but misses the specific title.",
       "systems": [
         {
-          "name": "sft4",
+          "name": "release_model",
+          "display_name": "PRISM-Memory 7B Adapter",
           "prediction": "a new mystery novel",
           "top_retrieval": [
             "Evan: [27 August 2023] Evan is reading a book that he finds increasingly compelling.",

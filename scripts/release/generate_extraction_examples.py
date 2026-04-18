@@ -15,11 +15,20 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_BETTER_MEMORY_ROOT = Path(
     os.environ.get("BETTER_MEMORY_ROOT", "/home/ec2-user/SageMaker/better_memory")
 )
-DEFAULT_MODEL_PATH = DEFAULT_BETTER_MEMORY_ROOT / "exp15_sft_qwen7b_4ep"
+DEFAULT_MODEL_PATH = next(
+    (
+        DEFAULT_BETTER_MEMORY_ROOT / candidate
+        for candidate in ("prism_memory_release", "exp15_sft_qwen7b_4ep")
+        if (DEFAULT_BETTER_MEMORY_ROOT / candidate).exists()
+    ),
+    DEFAULT_BETTER_MEMORY_ROOT / "exp15_sft_qwen7b_4ep",
+)
 DEFAULT_DATA_PATH = DEFAULT_BETTER_MEMORY_ROOT / "data" / "output" / "eval_sft.jsonl"
-DEFAULT_SHORTLIST = Path(__file__).with_name("readme_example_shortlist.json")
-DEFAULT_OUTPUT_JSON = REPO_ROOT / "results" / "readme_extraction_examples.json"
+DEFAULT_SHORTLIST = Path(__file__).with_name("extraction_example_shortlist.json")
+DEFAULT_OUTPUT_JSON = REPO_ROOT / "results" / "extraction_examples.json"
 DEFAULT_OUTPUT_MD = REPO_ROOT / "docs" / "release" / "extraction-examples.md"
+MODEL_NAME = "PRISM-Memory 7B Adapter"
+BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 
 SYSTEM_PROMPT = (
     "You are a memory extraction assistant. Given a conversation turn, "
@@ -262,9 +271,9 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         "",
         "# PRISM-Memory Extraction Examples",
         "",
-        "Selected held-out examples from the original Exp15 `eval_sft.jsonl` corpus.",
-        "The `GPT-4.1 reference` rows come from the original SFT target propositions.",
-        "The `PRISM-Memory` rows were regenerated from `exp15_sft_qwen7b_4ep` with greedy decoding using the same extraction prompt family used during evaluation.",
+        "Selected held-out examples from the synthetic evaluation split.",
+        "The `GPT-4.1 reference` rows come from the supervised target memory labels.",
+        f"The `{MODEL_NAME}` rows were regenerated with greedy decoding using the same extraction prompt family used during evaluation.",
         "",
         "These examples are illustrations, not the benchmark itself. Use",
         "[release-results.md](release-results.md) for the aggregate numbers.",
@@ -289,7 +298,7 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             ]
         )
         lines.extend([f"- {entry}" for entry in item["gpt41_reference"]])
-        lines.extend(["", "**PRISM-Memory `sft4`**", ""])
+        lines.extend(["", "**PRISM-Memory**", ""])
         lines.extend([f"- {entry}" for entry in item["prism_memory"]])
         lines.append("")
 
@@ -298,20 +307,12 @@ def _render_markdown(payload: dict[str, Any]) -> str:
             "## Regeneration",
             "",
             "```bash",
-            "conda run -n pytorch_p310 python scripts/release/generate_readme_examples.py",
+            "conda run -n pytorch_p310 python scripts/release/generate_extraction_examples.py",
             "```",
             "",
         ]
     )
     return "\n".join(lines)
-
-
-def _display_path(path: Path, root: Path, root_name: str) -> str:
-    try:
-        relative = path.resolve().relative_to(root.resolve())
-        return f"{root_name}/{relative}"
-    except ValueError:
-        return str(path)
 
 
 def main() -> None:
@@ -338,8 +339,9 @@ def main() -> None:
         )
 
     payload = {
-        "source_dataset": _display_path(args.data_path, args.better_memory_root, "BETTER_MEMORY_ROOT"),
-        "model_path": _display_path(args.model_path, args.better_memory_root, "BETTER_MEMORY_ROOT"),
+        "dataset_name": "Held-out synthetic evaluation split",
+        "model_name": MODEL_NAME,
+        "base_model": BASE_MODEL,
         "output_examples": len(output_examples),
         "examples": output_examples,
     }
