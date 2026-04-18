@@ -2,18 +2,12 @@
 
 Turn conversations into durable, searchable memory.
 
-PRISM-Memory is a 7B LoRA adapter that writes proposition-level memory from
-dialogue. It is trained to replace the GPT-4.1 extraction step in a
-PropMem-style memory pipeline. It is not a general chat assistant. It is the
-memory-writing component.
+PRISM-Memory is a 7B adapter that turns dialogue into compact memory records
+that can be retrieved later.
 
 [HF Model](https://huggingface.co/AsadIsmail/prism-memory) ·
 [Live Space](https://huggingface.co/spaces/AsadIsmail/prism-memory) ·
-[Release Docs](docs/release/README.md) ·
-[Data](docs/release/datasets.md) ·
-[End-To-End Scenarios](docs/release/memory-scenarios.md) ·
-[Extraction Examples](docs/release/extraction-examples.md) ·
-[Research Docs](docs/research/README.md)
+[Release Docs](docs/release/README.md)
 
 ![PRISM-Memory architecture](assets/prism-memory-architecture.svg)
 

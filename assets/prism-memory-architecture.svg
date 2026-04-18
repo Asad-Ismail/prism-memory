@@ -1,63 +1,62 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="320" viewBox="0 0 1120 320" role="img" aria-labelledby="title desc">
   <title id="title">PRISM-Memory architecture</title>
-  <desc id="desc">Dialogue turns flow into a proposition extractor, then into a hybrid memory index, then into retrieval and answer generation.</desc>
+  <desc id="desc">A four-step view of PRISM-Memory: dialogue, extraction, indexing, and recall.</desc>
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#f6fbf7"/>
-      <stop offset="100%" stop-color="#eef5ff"/>
+      <stop offset="0%" stop-color="#f8fbf8"/>
+      <stop offset="100%" stop-color="#eef4ff"/>
     </linearGradient>
-    <linearGradient id="box" x1="0" x2="1" y1="0" y2="1">
+    <linearGradient id="card" x1="0" x2="1" y1="0" y2="1">
       <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f5f8ff"/>
+      <stop offset="100%" stop-color="#f7f9fc"/>
     </linearGradient>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse">
-      <path d="M0 0L10 5L0 10Z" fill="#234b77"/>
-    </marker>
     <style>
-      .title { font: 700 20px Arial, sans-serif; fill: #16324f; }
-      .label { font: 700 15px Arial, sans-serif; fill: #173350; }
-      .body { font: 13px Arial, sans-serif; fill: #36506b; }
-      .small { font: 12px Arial, sans-serif; fill: #47627e; }
-      .box { fill: url(#box); stroke: #b9cbe0; stroke-width: 1.5; rx: 20; ry: 20; }
-      .accent { fill: #ddf2e5; stroke: #98c6ab; stroke-width: 1.5; rx: 16; ry: 16; }
+      .title { font: 700 24px ui-sans-serif, system-ui, sans-serif; fill: #17324d; }
+      .subtitle { font: 14px ui-sans-serif, system-ui, sans-serif; fill: #4a627a; }
+      .label { font: 700 16px ui-sans-serif, system-ui, sans-serif; fill: #16324f; }
+      .body { font: 13px ui-sans-serif, system-ui, sans-serif; fill: #425a70; }
+      .small { font: 12px ui-sans-serif, system-ui, sans-serif; fill: #5c7489; }
+      .box { fill: url(#card); stroke: #bfd0e2; stroke-width: 1.5; rx: 18; ry: 18; }
+      .box-accent { fill: #e8f6ec; stroke: #9dc5a7; stroke-width: 1.5; rx: 18; ry: 18; }
+      .step { fill: #ffffff; stroke: #bfd0e2; stroke-width: 1.5; }
+      .step-text { font: 700 16px ui-sans-serif, system-ui, sans-serif; fill: #1f4a72; text-anchor: middle; dominant-baseline: middle; }
     </style>
   </defs>
 
-  <rect width="1120" height="360" fill="url(#bg)" rx="28" ry="28"/>
+  <rect width="1120" height="320" fill="url(#bg)" rx="24" ry="24"/>
 
-  <text x="60" y="56" class="title">PRISM-Memory: turn conversations into durable, searchable memory</text>
+  <text x="56" y="54" class="title">PRISM-Memory</text>
+  <text x="56" y="78" class="subtitle">Write memory once. Retrieve it later.</text>
 
-  <rect x="52" y="92" width="220" height="188" class="box"/>
-  <text x="76" y="124" class="label">Dialogue Turns</text>
-  <text x="76" y="152" class="body">Raw user and assistant messages</text>
-  <text x="76" y="176" class="body">Temporal updates and corrections</text>
-  <text x="76" y="200" class="body">Personal facts and preferences</text>
-  <text x="76" y="238" class="small">Input stays conversational.</text>
+  <rect x="48" y="106" width="220" height="128" class="box"/>
+  <text x="72" y="136" class="label">1. Dialogue</text>
+  <text x="72" y="166" class="body">Raw chat turns</text>
+  <text x="72" y="190" class="body">Facts, updates, preferences</text>
 
-  <rect x="318" y="92" width="250" height="188" class="accent"/>
-  <text x="344" y="124" class="label">PRISM Extractor</text>
-  <text x="344" y="152" class="body">Fine-tuned Qwen2.5-7B LoRA adapter</text>
-  <text x="344" y="176" class="body">Writes 0-5 atomic propositions per turn</text>
-  <text x="344" y="200" class="body">Keeps dates when present</text>
-  <text x="344" y="224" class="body">Skips filler, questions, and unsupported facts</text>
+  <circle cx="292" cy="170" r="16" class="step"/>
+  <text x="292" y="170" class="step-text">→</text>
 
-  <rect x="612" y="92" width="250" height="188" class="box"/>
-  <text x="638" y="124" class="label">Hybrid Memory Index</text>
-  <text x="638" y="152" class="body">Proposition store</text>
-  <text x="638" y="176" class="body">Sparse retrieval</text>
-  <text x="638" y="200" class="body">Dense retrieval</text>
-  <text x="638" y="224" class="body">Reranking and contradiction handling</text>
+  <rect x="316" y="106" width="220" height="128" class="box-accent"/>
+  <text x="340" y="136" class="label">2. Extract</text>
+  <text x="340" y="166" class="body">7B LoRA memory writer</text>
+  <text x="340" y="190" class="body">0-5 dated memory records</text>
 
-  <rect x="906" y="92" width="162" height="188" class="box"/>
-  <text x="930" y="124" class="label">Recall</text>
-  <text x="930" y="152" class="body">Answer user queries</text>
-  <text x="930" y="176" class="body">Expose retrieved memory</text>
-  <text x="930" y="200" class="body">Benchmark on LoCoMo</text>
-  <text x="930" y="224" class="body">and LongMemEval</text>
+  <circle cx="560" cy="170" r="16" class="step"/>
+  <text x="560" y="170" class="step-text">→</text>
 
-  <path d="M272 186H318" stroke="#234b77" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
-  <path d="M568 186H612" stroke="#234b77" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
-  <path d="M862 186H906" stroke="#234b77" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <rect x="584" y="106" width="220" height="128" class="box"/>
+  <text x="608" y="136" class="label">3. Index</text>
+  <text x="608" y="166" class="body">Store propositions</text>
+  <text x="608" y="190" class="body">BM25 + dense + rerank</text>
 
-  <text x="58" y="320" class="small">Released model: PRISM-Memory 7B Adapter • Confirmed LoCoMo 0.4981 • Confirmed LongMemEval 0.4768</text>
+  <circle cx="828" cy="170" r="16" class="step"/>
+  <text x="828" y="170" class="step-text">→</text>
+
+  <rect x="852" y="106" width="220" height="128" class="box"/>
+  <text x="876" y="136" class="label">4. Recall</text>
+  <text x="876" y="166" class="body">Retrieve supporting memory</text>
+  <text x="876" y="190" class="body">Answer later questions</text>
+
+  <text x="56" y="276" class="small">Released model: PRISM-Memory 7B Adapter</text>
+  <text x="56" y="296" class="small">Confirmed scores: LoCoMo 0.4981 • LongMemEval 0.4768</text>
 </svg>
